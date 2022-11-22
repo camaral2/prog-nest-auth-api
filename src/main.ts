@@ -74,7 +74,7 @@ async function bootstrap() {
   await app.startAllMicroservices();
 
   await app.listen(PORT, () => {
-    Logger.log(`001: Listening on PORT: ${PORT}`);
+    Logger.log(`Listening on PORT: ${PORT}`);
   });
 }
 bootstrap();
