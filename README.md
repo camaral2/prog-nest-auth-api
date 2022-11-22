@@ -3,4 +3,4 @@ This project is responsible for managing the admin user and generating tokens fo
 
 ## Stay in touch
 
-- Author - [Cristian Amaral](https://www.linkedin.com/in/cristian-amaral-061b0b68) 
+- Author - [Cristian Amaral](https://www.linkedin.com/in/cristian-amaral-061b0b68)
