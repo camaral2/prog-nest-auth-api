@@ -3,12 +3,11 @@
 
 name: TestCode
 
-on:
+on: 
   push:
-    branches:
-      - main
+    branches: [ main/master ]
   pull_request:
-
+    branches: [ main/master ]
 jobs:
   build:
     runs-on: ubuntu-latest
