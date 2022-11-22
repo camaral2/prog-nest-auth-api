@@ -18,8 +18,3 @@ jobs:
           cache: 'yarn'
       
       - run: yarn
-<<<<<<< HEAD
-      - run: yarn test:unit 
-=======
-      - run: yarn test:unit
->>>>>>> 162117e02f150a8fa524080ef52ed546f5a35c78
