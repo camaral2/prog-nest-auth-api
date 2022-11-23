@@ -1,20 +1,48 @@
-name: Validate Data
+name: Validate Solution
  
 on:
   push:
   pull_request:
 
-jobs:
-  validate-data:
-    permissions:
-      contents: read
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
+env:
+  PORT: 4000
+  MONGO_URL: mongodb://localhost:27017/db_auth_api
+  SECREDT_KEY_AUTH: B398_cv_pp!12df
+  EXPIRESIN: 60s
+  SECREDT_KEY_REFRESH: Hj+=Y:Zut87Yy09w1
+  EXPIRESIN_REFRESH: 5d
+  JWT_IGNORE_EXPIRATION: false
+  PORT_MCRO: 4010
+  HOST_MCRO: localhost
 
-      - uses: actions/setup-node@v3
-        with:
-          node-version: '16'
-          cache: 'yarn'
-      
-      - run: yarn 
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [16.x]
+        mongodb-version: ['6.0']
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'yarn'
+
+    - name: Start MongoDB
+      uses: supercharge/mongodb-github-action@1.8.0
+      with:
+        mongodb-version: ${{ matrix.mongodb-version }}
+        mongodb-port: 27017
+        mongodb-db: db_auth_api
+        #mongodb-username: usuario
+        #mongodb-password: senha  
+
+    - name: Install dependencies
+      run: yarn install --frozen-lockfile      
+
+    - name: Running e2e testing
+      run: yarn test:e2e
