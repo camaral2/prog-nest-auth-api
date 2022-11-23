@@ -58,7 +58,8 @@ describe('AppController (e2e)', () => {
       const newUser = await userRepository.create({
         name: name,
         username: username,
-        password: password,
+        password:
+          '$2b$10$rZrKQaQjFh4vCRr2ixTlaeSvox8Fozlc4M.pR3pzQjAE0g0Tokrj.',
       });
 
       await newUser.save();
