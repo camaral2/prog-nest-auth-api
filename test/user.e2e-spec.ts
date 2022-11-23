@@ -5,14 +5,34 @@ import * as request from 'supertest';
 import { AppModule } from './../src/app.module';
 import { faker } from '@faker-js/faker';
 import { HttpExceptionFilter } from '@baseApi/shared/filter';
+import { Repository } from 'typeorm';
+import { User } from '@baseApi/user/entities/user.entity';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 describe('AppController (e2e)', () => {
   let app: INestApplication;
   let api;
+  let userRepository: Repository<User>;
+
+  let jwtToken;
+
+  const name = 'Cristian dos Santos Amaral';
+  const username = 'cristian.amaral';
+  const password = 'teste_12';
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [AppModule],
+      imports: [
+        AppModule,
+        TypeOrmModule.forRoot({
+          type: 'mongodb',
+          url: process.env.MONGO_URL,
+          synchronize: true,
+          useNewUrlParser: true,
+          logging: true,
+          useUnifiedTopology: true,
+        }),
+      ],
     }).compile();
 
     app = moduleFixture.createNestApplication();
@@ -21,15 +41,29 @@ describe('AppController (e2e)', () => {
 
     await app.init();
     api = app.getHttpServer();
+
+    userRepository = moduleFixture.get('UserRepository');
   });
 
-  afterEach(async () => {
+  afterAll(async () => {
     await app.close();
   });
 
-  let jwtToken;
-  const username = 'cristian.amaral';
-  const password = 'teste_12';
+  afterEach(async () => {
+    const user = await userRepository.findOneBy({
+      username: username.toLowerCase().trim(),
+    });
+
+    if (!user) {
+      const newUser = await userRepository.create({
+        name: name,
+        username: username,
+        password: password,
+      });
+
+      await newUser.save();
+    }
+  });
 
   describe('POST /auth/login', () => {
     it('Should validate the payload', () => {
@@ -102,13 +136,13 @@ describe('AppController (e2e)', () => {
 
       // invalid password
       { name: validUser.name, username: faker.internet.userName() },
-      { password: undefined, name: validUser.name, username: faker.internet.userName()},
-      { password: null, name: validUser.name, username: faker.internet.userName()},
-      { password: faker.datatype.boolean(), name: validUser.name, username: faker.internet.userName()},
-      { password: faker.datatype.number(), name: validUser.name, username: faker.internet.userName()},
-      { password: JSON.parse(faker.datatype.json()), name: validUser.name, username: faker.internet.userName()},
-      { password: '', name: validUser.name, username: faker.internet.userName()},
-      { password: faker.word.noun(), name: validUser.name, username: faker.internet.userName()},
+      { password: undefined, name: validUser.name, username: faker.internet.userName() },
+      { password: null, name: validUser.name, username: faker.internet.userName() },
+      { password: faker.datatype.boolean(), name: validUser.name, username: faker.internet.userName() },
+      { password: faker.datatype.number(), name: validUser.name, username: faker.internet.userName() },
+      { password: JSON.parse(faker.datatype.json()), name: validUser.name, username: faker.internet.userName() },
+      { password: '', name: validUser.name, username: faker.internet.userName() },
+      { password: faker.word.noun(), name: validUser.name, username: faker.internet.userName() },
     ];
   };
 

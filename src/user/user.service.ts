@@ -19,19 +19,7 @@ export class UserService {
   constructor(
     @InjectRepository(User)
     private readonly usersRepository: Repository<User>,
-  ) {
-    useFactory: async () => {
-      const newUser: CreateUserDto = {
-        name: 'Cristian dos Santos Amaral',
-        username: 'cristian.amaral',
-        password: 'teste_12',
-      };
-
-      const user = await this.findOneLogin(newUser.username);
-
-      if (!user) await this.create(newUser);
-    };
-  }
+  ) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
     const user = await this.dtoToUser(createUserDto, null);
