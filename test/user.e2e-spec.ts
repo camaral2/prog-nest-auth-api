@@ -42,14 +42,14 @@ describe('AppController (e2e)', () => {
     await app.init();
     api = app.getHttpServer();
 
-    userRepository = moduleFixture.get('UserRepository');
+    userRepository = moduleFixture.get('user');
   });
 
   afterAll(async () => {
     await app.close();
   });
 
-  afterEach(async () => {
+  beforeAll(async () => {
     const user = await userRepository.findOneBy({
       username: username.toLowerCase().trim(),
     });
