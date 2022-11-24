@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Injectable,
   NotFoundException,
+  OnModuleInit,
 } from '@nestjs/common';
 
 import { InjectRepository } from '@nestjs/typeorm';
@@ -15,23 +16,21 @@ import * as uuid from 'uuid';
 import { returnDeleteUpdateT } from '@baseApi/shared/return-delete-update.type';
 
 @Injectable()
-export class UserService {
+export class UserService implements OnModuleInit {
   constructor(
     @InjectRepository(User)
     private readonly usersRepository: Repository<User>,
-  ) {
-    this.LoadAsync();
-  }
+  ) {}
 
-  private LoadAsync = async () => {
+  async onModuleInit(): Promise<void> {
     const users = await this.findAll();
     if (users.length == 0)
-      this.create({
+      await this.create({
         username: 'cristian.amaral',
         name: 'Cristian dos Santos Amaral',
         password: 'teste_12',
       });
-  };
+  }
 
   async create(createUserDto: CreateUserDto): Promise<User> {
     const user = await this.dtoToUser(createUserDto, null);
