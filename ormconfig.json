@@ -1,0 +1,12 @@
+{
+  "type": "mongodb",
+  "url": "mongodb://localhost/prog-nest-auth",
+  "entities": ["dist/**/entities/*.entity{ .ts,.js}"],
+  "synchronize": true,
+  "migrations": ["dist/migrations/*{.ts,.js}"],
+  "migrationsTableName": "migrations_typeorm",
+  "migrationsRun": true,
+  "cli": {
+    "migrationsDir": "src/migration"
+ }
+}

@@ -12,15 +12,13 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 describe('AppController (e2e)', () => {
   let app: INestApplication;
   let api;
-  let userRepository: Repository<User>;
 
   let jwtToken;
 
-  const name = 'Cristian dos Santos Amaral';
   const username = 'cristian.amaral';
   const password = 'teste_12';
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [
         AppModule,
@@ -41,29 +39,10 @@ describe('AppController (e2e)', () => {
 
     await app.init();
     api = app.getHttpServer();
-
-    userRepository = moduleFixture.get('user');
   });
 
   afterAll(async () => {
     await app.close();
-  });
-
-  beforeAll(async () => {
-    const user = await userRepository.findOneBy({
-      username: username.toLowerCase().trim(),
-    });
-
-    if (!user) {
-      const newUser = await userRepository.create({
-        name: name,
-        username: username,
-        password:
-          '$2b$10$rZrKQaQjFh4vCRr2ixTlaeSvox8Fozlc4M.pR3pzQjAE0g0Tokrj.',
-      });
-
-      await newUser.save();
-    }
   });
 
   describe('POST /auth/login', () => {

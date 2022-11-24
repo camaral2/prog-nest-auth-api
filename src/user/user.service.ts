@@ -19,7 +19,19 @@ export class UserService {
   constructor(
     @InjectRepository(User)
     private readonly usersRepository: Repository<User>,
-  ) {}
+  ) {
+    this.LoadAsync();
+  }
+
+  private LoadAsync = async () => {
+    const users = await this.findAll();
+    if (users.length == 0)
+      this.create({
+        username: 'cristian.amaral',
+        name: 'Cristian dos Santos Amaral',
+        password: 'teste_12',
+      });
+  };
 
   async create(createUserDto: CreateUserDto): Promise<User> {
     const user = await this.dtoToUser(createUserDto, null);
