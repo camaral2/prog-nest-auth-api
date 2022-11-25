@@ -1,4 +1,4 @@
-import { HttpExceptionFilter } from '@baseApi/shared/filter';
+import { HttpExceptionFilter } from '../shared/filter';
 import {
   Controller,
   Post,

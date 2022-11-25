@@ -11,7 +11,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import helmet from 'helmet';
 //import { useContainer } from 'class-validator';
 //import { MongoExceptionFilter } from './shared/mongo-exception.filter';
-import { HttpExceptionFilter } from '@baseApi/shared/filter';
+import { HttpExceptionFilter } from './shared/filter';
 //import * as csurf from 'csurf';
 //import * as cookieParser from 'cookie-parser';
 import * as session from 'express-session';

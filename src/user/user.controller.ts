@@ -21,9 +21,9 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { HttpExceptionFilter } from '@baseApi/shared/filter';
-import { returnDeleteUpdateT } from '@baseApi/shared/return-delete-update.type';
-import { JwtAuthGuard } from '@baseApi/auth/jwt.auth-guard';
+import { HttpExceptionFilter } from '../shared/filter';
+import { returnDeleteUpdateT } from '../shared/return-delete-update.type';
+import { JwtAuthGuard } from '../auth/jwt.auth-guard';
 
 @ApiBearerAuth()
 @ApiTags('user')

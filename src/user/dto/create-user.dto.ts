@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsPasswordValid } from '@baseApi/shared/password.validator';
-
+import { IsPasswordValid } from '../../shared/password.validator';
+//import { IsPasswordValid } from '@baseApi/shared/password.validator';
 import { IsNotEmpty, IsString, MaxLength, MinLength } from 'class-validator';
 
 export class CreateUserDto {

@@ -1,12 +1,12 @@
-import { UserService } from '@baseApi/user/user.service';
+import { UserService } from '../user/user.service';
 import {
   ForbiddenException,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
-import { LoginUserDto } from '@baseApi/auth/dto/login-user.dto';
+import { LoginUserDto } from '../auth/dto/login-user.dto';
 import { JwtService } from '@nestjs/jwt';
-import { User } from '@baseApi/user/entities/user.entity';
+import { User } from '../user/entities/user.entity';
 import * as bcrypt from 'bcrypt';
 import { payloadToken } from './types/payload-token.type';
 import { tokens } from './types/tokens-types';

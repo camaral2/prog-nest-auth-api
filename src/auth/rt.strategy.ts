@@ -3,7 +3,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import 'dotenv/config';
-import { UserService } from '@baseApi/user/user.service';
+import { UserService } from '../user/user.service';
 import { RequestUserDto } from './dto/request-user.dto';
 
 @Injectable()
