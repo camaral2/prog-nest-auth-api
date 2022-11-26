@@ -18,13 +18,8 @@
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
     "paths": {
-      "@baseApi/*": ["src/*"]      
+      "@baseApi/*": ["src/*", "bin/*"]      
     },    
   },
-  "exclude": [
-    "src/**/*.spec.ts",
-    "src/**/*.test.ts",
-    "test/*.spec.ts",
-    "node_modules"
-  ]
+  "exclude": ["node_modules", "test", "dist", "**/*spec.ts"]
 }

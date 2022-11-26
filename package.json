@@ -5,9 +5,10 @@
   "author": "",
   "private": true,
   "license": "UNLICENSED",
+  "main": "dist/main.js",
   "scripts": {
-    "start": "yarn run build && node dist/src/main.js",
-    "build": "rimraf ./dist && tsc -p tsconfig.json",
+    "start": "yarn run build && node dist/main.js",
+    "build": "rimraf ./dist && tsc",
     "postinstall": "npm run build",
     "prebuild": "rimraf dist",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
