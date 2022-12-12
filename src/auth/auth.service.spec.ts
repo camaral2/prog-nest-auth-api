@@ -9,10 +9,13 @@ import { AuthService } from './auth.service';
 import { LoginUserDto } from './dto/login-user.dto';
 import * as bcrypt from 'bcrypt';
 import { UnauthorizedException } from '@nestjs/common';
+import { syncBuiltinESMExports } from 'module';
+import * as argon from 'argon2';
 
 describe('AuthService', () => {
   let service: AuthService;
   let repositoryMock: Repository<User>;
+  let signSpy: jest.SpyInstance;
 
   const userName = faker.internet.userName().toLocaleLowerCase();
   const passWord = faker.internet.password();
@@ -26,6 +29,13 @@ describe('AuthService', () => {
       password: hash,
       name: faker.name.fullName(),
       isActive: true,
+    };
+
+    process.env = {
+      SECREDT_KEY_AUTH: 'B398_cv_pp!12df',
+      EXPIRESIN: '60s',
+      SECREDT_KEY_REFRESH: 'Hj+=Y:Zut87Yy09w1',
+      EXPIRESIN_REFRESH: '5d',
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -44,6 +54,7 @@ describe('AuthService', () => {
             create: jest.fn(),
             exec: jest.fn(),
             deleteOne: jest.fn(),
+            update: jest.fn(),
           },
         },
       ],
@@ -66,24 +77,6 @@ describe('AuthService', () => {
 
       expect(userRet.username).toEqual(userName);
       expect(userRet.password).toBeUndefined();
-
-      /*
-      expect(userRet.id).toBeDefined();
-      expect(userRet.username).toBeDefined();
-      expect(userRet.accessToken).toBeDefined();
-      expect(userRet.refreshToken).toBeDefined();
-
-      id = res.body.id;
-      jwtToken = res.body.accessToken;
-      rtToken = res.body.refreshToken;
-
-      expect(jwtToken).toMatch(
-        /^[A-Za-z0-9-_=]+\.[A-Za-z0-9-_=]+\.?[A-Za-z0-9-_.+/=]*$/,
-      ); // jwt regex
-      expect(rtToken).toMatch(
-        /^[A-Za-z0-9-_=]+\.[A-Za-z0-9-_=]+\.?[A-Za-z0-9-_.+/=]*$/,
-      ); // jwt regex
-      */
     });
 
     it('should return then error by username invalid authentication', async () => {
@@ -92,15 +85,77 @@ describe('AuthService', () => {
         password: passWord,
       };
 
+      jest
+        .spyOn(repositoryMock, 'findOneBy')
+        .mockImplementationOnce(() => Promise.resolve(null));
+
       const userRet = await expect(service.validateUser(login)).rejects.toThrow(
-        UnauthorizedException,
+        new UnauthorizedException({
+          message: 'User not found',
+        }),
       );
       expect(repositoryMock.findOneBy).toBeCalled();
 
       expect(userRet).toBeUndefined();
     });
+
+    it('should return then error by password invalid authentication', async () => {
+      const login: LoginUserDto = {
+        username: userName,
+        password: '12345678',
+      };
+
+      const userRet = await expect(service.validateUser(login)).rejects.toThrow(
+        new UnauthorizedException({
+          message: 'Invalid credentials',
+        }),
+      );
+
+      expect(repositoryMock.findOneBy).toBeCalled();
+      expect(userRet).toBeUndefined();
+    });
   });
 
-  // describe('should login user with valid credentials', () => {
-  // });
+  //55,70-95
+
+  describe('Login Valid', () => {
+    it('should login user with valid credentials', async () => {
+      jest.spyOn(argon, 'hash').mockImplementation(() => Promise.resolve(''));
+
+      const login: LoginUserDto = { username: userName, password: passWord };
+
+      const loginRet = await service.login(login);
+      expect(repositoryMock.findOneBy).toBeCalled();
+      expect(repositoryMock.update).toBeCalled();
+
+      expect(loginRet.username).toEqual(userName);
+      expect(loginRet.token.access_token).toBeDefined();
+      expect(loginRet.token.refresh_token).toBeDefined();
+    });
+
+    it('should login user with user not active for valid credentials', async () => {
+      jest.spyOn(argon, 'hash').mockImplementation(() => Promise.resolve(''));
+
+      const oneUserInactive = {
+        username: userName,
+        password: '11223',
+        name: faker.name.fullName(),
+        isActive: false,
+      };
+
+      jest
+        .spyOn(repositoryMock, 'findOneBy')
+        .mockResolvedValue(oneUserInactive as User);
+
+      const login: LoginUserDto = { username: userName, password: passWord };
+
+      await expect(service.login(login)).rejects.toThrow(
+        new UnauthorizedException({
+          message: 'Access Denied - User not is active',
+        }),
+      );
+
+      expect(repositoryMock.findOneBy).toBeCalled();
+    });
+  });
 });

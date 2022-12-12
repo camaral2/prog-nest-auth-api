@@ -19,6 +19,7 @@ import { LocalAuthGuard } from './local-auth.guard';
 import { MessagePattern } from '@nestjs/microservices';
 import { tokens } from './types/tokens-types';
 import { RtGuard } from './rt-auth.guard';
+import { tokensLogin } from './types/tokensLogin-types';
 
 @ApiBearerAuth()
 @ApiTags('auth')
@@ -31,7 +32,7 @@ export class AuthController {
   @ApiOperation({ summary: 'Login user' })
   @UseGuards(LocalAuthGuard)
   @Post('/login')
-  async login(@Body() login: LoginUserDto): Promise<tokens> {
+  async login(@Body() login: LoginUserDto): Promise<tokensLogin> {
     return this.authService.login(login);
   }
 
@@ -51,7 +52,7 @@ export class AuthController {
   @Post('refresh')
   @HttpCode(HttpStatus.OK)
   @MessagePattern({ role: 'auth', cmd: 'refresh' })
-  refreshTokens(@Req() request: any): Promise<tokens> {
+  refreshTokens(@Req() request: any): Promise<tokensLogin> {
     const jwt = request.headers.authorization.replace('Bearer ', '');
 
     return this.authService.refreshTokens(request.user.username, jwt);

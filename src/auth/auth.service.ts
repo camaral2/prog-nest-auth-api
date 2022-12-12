@@ -12,6 +12,7 @@ import { payloadToken } from './types/payload-token.type';
 import { tokens } from './types/tokens-types';
 import * as uuid from 'uuid';
 import * as argon from 'argon2';
+import { tokensLogin } from './types/tokensLogin-types';
 
 @Injectable()
 export class AuthService {
@@ -46,7 +47,7 @@ export class AuthService {
     return user;
   }
 
-  async login(userLogin: LoginUserDto): Promise<tokens> {
+  async login(userLogin: LoginUserDto): Promise<tokensLogin> {
     const user = await this.userService.findOne(userLogin.username);
     if (!user) throw new ForbiddenException('Access Denied');
 
@@ -56,12 +57,12 @@ export class AuthService {
     // generate and sign token
     const token = this.createToken(user.username);
 
-    await this.userService.updateRtHash(user.username, token.refreshToken);
+    await this.userService.updateRtHash(user.username, token.refresh_token);
 
     return {
       id: user._id,
       username: user.username,
-      ...token,
+      token: token,
     };
   }
 
@@ -70,7 +71,7 @@ export class AuthService {
     return true;
   }
 
-  async refreshTokens(userName: string, rt: string): Promise<tokens> {
+  async refreshTokens(userName: string, rt: string): Promise<tokensLogin> {
     const user = await this.userService.findOne(userName);
     if (!user || !user.hashedRt) throw new ForbiddenException('Access Denied');
 
@@ -81,12 +82,12 @@ export class AuthService {
     if (!rtMatches) throw new ForbiddenException('Access Denied - No Matches');
 
     const token = await this.createToken(user.username);
-    await this.userService.updateRtHash(user.username, token.refreshToken);
+    await this.userService.updateRtHash(user.username, token.refresh_token);
 
     return {
       id: user._id,
       username: user.username,
-      ...token,
+      token: token,
     };
   }
 
@@ -94,7 +95,7 @@ export class AuthService {
     return this.jwtService.verify(jwt);
   }
 
-  private createToken(userName: string): any {
+  private createToken(userName: string): tokens {
     const identific: string = uuid.v4();
     const payload: payloadToken = { username: userName, identific };
 
@@ -109,8 +110,8 @@ export class AuthService {
     });
 
     return {
-      accessToken,
-      refreshToken,
+      access_token: accessToken,
+      refresh_token: refreshToken,
     };
   }
 }
