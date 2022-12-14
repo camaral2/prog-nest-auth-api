@@ -11,24 +11,32 @@ import * as bcrypt from 'bcrypt';
 import { UnauthorizedException } from '@nestjs/common';
 import { syncBuiltinESMExports } from 'module';
 import * as argon from 'argon2';
+import * as uuid from 'uuid';
 
 describe('AuthService', () => {
   let service: AuthService;
   let repositoryMock: Repository<User>;
-  let signSpy: jest.SpyInstance;
 
   const userName = faker.internet.userName().toLocaleLowerCase();
   const passWord = faker.internet.password();
+  const rt = faker.random.alphaNumeric(30);
+
+  let hash;
+  let newHashedRt;
 
   beforeEach(async () => {
     const saltOrRounds = 10;
-    const hash = await bcrypt.hash(passWord + userName, saltOrRounds);
+
+    if (!hash) hash = await bcrypt.hash(passWord + userName, saltOrRounds);
+    if (!newHashedRt) newHashedRt = await argon.hash(rt);
 
     const oneUser = {
+      _id: await uuid.v4(),
       username: userName,
       password: hash,
       name: faker.name.fullName(),
       isActive: true,
+      hashedRt: newHashedRt,
     };
 
     process.env = {
@@ -76,7 +84,7 @@ describe('AuthService', () => {
       expect(repositoryMock.findOneBy).toBeCalled();
 
       expect(userRet.username).toEqual(userName);
-      expect(userRet.password).toBeUndefined();
+      //expect(userRet.password).toBeUndefined();
     });
 
     it('should return then error by username invalid authentication', async () => {
@@ -85,7 +93,7 @@ describe('AuthService', () => {
         password: passWord,
       };
 
-      jest
+      const findSpyNotExists = jest
         .spyOn(repositoryMock, 'findOneBy')
         .mockImplementationOnce(() => Promise.resolve(null));
 
@@ -94,7 +102,7 @@ describe('AuthService', () => {
           message: 'User not found',
         }),
       );
-      expect(repositoryMock.findOneBy).toBeCalled();
+      expect(findSpyNotExists).toBeCalled();
 
       expect(userRet).toBeUndefined();
     });
@@ -116,17 +124,20 @@ describe('AuthService', () => {
     });
   });
 
-  //55,70-95
+  //70-95
 
   describe('Login Valid', () => {
     it('should login user with valid credentials', async () => {
-      jest.spyOn(argon, 'hash').mockImplementation(() => Promise.resolve(''));
+      const hashSpy = jest
+        .spyOn(argon, 'hash')
+        .mockImplementation(() => Promise.resolve(''));
 
       const login: LoginUserDto = { username: userName, password: passWord };
 
       const loginRet = await service.login(login);
       expect(repositoryMock.findOneBy).toBeCalled();
       expect(repositoryMock.update).toBeCalled();
+      expect(hashSpy).toBeCalled();
 
       expect(loginRet.username).toEqual(userName);
       expect(loginRet.token.access_token).toBeDefined();
@@ -134,16 +145,17 @@ describe('AuthService', () => {
     });
 
     it('should login user with user not active for valid credentials', async () => {
-      jest.spyOn(argon, 'hash').mockImplementation(() => Promise.resolve(''));
+      const hashSpy = jest
+        .spyOn(argon, 'hash')
+        .mockImplementation(() => Promise.resolve(''));
 
       const oneUserInactive = {
         username: userName,
-        password: '11223',
+        password: hash,
         name: faker.name.fullName(),
         isActive: false,
       };
-
-      jest
+      const findSpy = jest
         .spyOn(repositoryMock, 'findOneBy')
         .mockResolvedValue(oneUserInactive as User);
 
@@ -155,7 +167,28 @@ describe('AuthService', () => {
         }),
       );
 
+      expect(hashSpy).toBeCalled();
+      expect(findSpy).toBeCalled();
+    });
+  });
+
+  describe('Logout', () => {
+    it('should logout user', async () => {
+      await service.logout('');
+      expect(repositoryMock.update).toBeCalled();
+    });
+  });
+
+  describe('RefreshToken', () => {
+    it('should refresh token user with valid credentials', async () => {
+      const retRefresh = await service.refreshTokens(userName, rt);
       expect(repositoryMock.findOneBy).toBeCalled();
+      expect(repositoryMock.update).toBeCalled();
+
+      expect(retRefresh.id).toBeDefined();
+      expect(retRefresh.username).toEqual(userName);
+      expect(retRefresh.token.access_token).toBeDefined();
+      expect(retRefresh.token.refresh_token).toBeDefined();
     });
   });
 });

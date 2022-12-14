@@ -42,7 +42,7 @@ export class AuthService {
       });
     }
 
-    delete user.password;
+    //delete user.password;
 
     return user;
   }
@@ -73,6 +73,7 @@ export class AuthService {
 
   async refreshTokens(userName: string, rt: string): Promise<tokensLogin> {
     const user = await this.userService.findOne(userName);
+
     if (!user || !user.hashedRt) throw new ForbiddenException('Access Denied');
 
     if (!user.isActive)

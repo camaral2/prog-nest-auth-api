@@ -67,7 +67,7 @@ export class UserService implements OnModuleInit {
 
     if (!user) throw new NotFoundException(`Username not found: (${username})`);
 
-    delete user.password;
+    //delete user.password;
     return user;
   }
 
@@ -77,7 +77,7 @@ export class UserService implements OnModuleInit {
     const user = await this.usersRepository.findOne({ where: { _id: id } });
     if (!user) throw new NotFoundException(`Id not found: (${id})`);
 
-    delete user.password;
+    //delete user.password;
     return user;
   }
 
