@@ -49,21 +49,24 @@ export class AuthService {
 
   async login(userLogin: LoginUserDto): Promise<tokensLogin> {
     const user = await this.userService.findOne(userLogin.username);
-    if (!user) throw new ForbiddenException('Access Denied');
+    if (!user) {
+      throw new ForbiddenException('Access Denied');
+    } else {
+      if (!user.isActive) {
+        throw new ForbiddenException('Access Denied - User not is active');
+      } else {
+        // generate and sign token
+        const token = this.createToken(user.username);
 
-    if (!user.isActive)
-      throw new ForbiddenException('Access Denied - User not is active');
+        await this.userService.updateRtHash(user.username, token.refresh_token);
 
-    // generate and sign token
-    const token = this.createToken(user.username);
-
-    await this.userService.updateRtHash(user.username, token.refresh_token);
-
-    return {
-      id: user._id,
-      username: user.username,
-      token: token,
-    };
+        return {
+          id: user._id,
+          username: user.username,
+          token: token,
+        };
+      }
+    }
   }
 
   async logout(userId: string): Promise<boolean> {
@@ -74,22 +77,30 @@ export class AuthService {
   async refreshTokens(userName: string, rt: string): Promise<tokensLogin> {
     const user = await this.userService.findOne(userName);
 
-    if (!user || !user.hashedRt) throw new ForbiddenException('Access Denied');
+    if (!user || !user.hashedRt) {
+      throw new ForbiddenException('Access Denied');
+    } else {
+      if (!user.isActive) {
+        throw new ForbiddenException('Access Denied - User not is active');
+      } else {
+        const rtMatches = await argon.verify(user.hashedRt, rt);
+        if (!rtMatches) {
+          throw new ForbiddenException('Access Denied - No Matches');
+        } else {
+          const token = await this.createToken(user.username);
+          await this.userService.updateRtHash(
+            user.username,
+            token.refresh_token,
+          );
 
-    if (!user.isActive)
-      throw new ForbiddenException('Access Denied - User not is active');
-
-    const rtMatches = await argon.verify(user.hashedRt, rt);
-    if (!rtMatches) throw new ForbiddenException('Access Denied - No Matches');
-
-    const token = await this.createToken(user.username);
-    await this.userService.updateRtHash(user.username, token.refresh_token);
-
-    return {
-      id: user._id,
-      username: user.username,
-      token: token,
-    };
+          return {
+            id: user._id,
+            username: user.username,
+            token: token,
+          };
+        }
+      }
+    }
   }
 
   validateToken(jwt: string) {

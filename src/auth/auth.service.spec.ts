@@ -1,3 +1,4 @@
+//52,77,83
 import { User } from '@baseApi/user/entities/user.entity';
 import { UserService } from '@baseApi/user/user.service';
 import { faker } from '@faker-js/faker';
@@ -16,6 +17,7 @@ import * as uuid from 'uuid';
 describe('AuthService', () => {
   let service: AuthService;
   let repositoryMock: Repository<User>;
+  let jwtService: JwtService;
 
   const userName = faker.internet.userName().toLocaleLowerCase();
   const passWord = faker.internet.password();
@@ -70,6 +72,7 @@ describe('AuthService', () => {
 
     service = module.get<AuthService>(AuthService);
     repositoryMock = module.get<Repository<User>>(getRepositoryToken(User));
+    jwtService = module.get(JwtService);
   });
 
   it('should be defined', () => {
@@ -124,8 +127,6 @@ describe('AuthService', () => {
     });
   });
 
-  //70-95
-
   describe('Login Valid', () => {
     it('should login user with valid credentials', async () => {
       const hashSpy = jest
@@ -142,6 +143,27 @@ describe('AuthService', () => {
       expect(loginRet.username).toEqual(userName);
       expect(loginRet.token.access_token).toBeDefined();
       expect(loginRet.token.refresh_token).toBeDefined();
+    });
+
+    it('should login user with dont have user', async () => {
+      const hashSpy = jest
+        .spyOn(argon, 'hash')
+        .mockImplementation(() => Promise.resolve(''));
+
+      const findNullSpy = jest
+        .spyOn(repositoryMock, 'findOneBy')
+        .mockResolvedValue(null);
+
+      const login: LoginUserDto = { username: userName, password: passWord };
+
+      await expect(service.login(login)).rejects.toThrow(
+        new UnauthorizedException({
+          message: 'Access Denied',
+        }),
+      );
+
+      expect(hashSpy).toBeCalled();
+      expect(findNullSpy).toBeCalled();
     });
 
     it('should login user with user not active for valid credentials', async () => {
@@ -189,6 +211,64 @@ describe('AuthService', () => {
       expect(retRefresh.username).toEqual(userName);
       expect(retRefresh.token.access_token).toBeDefined();
       expect(retRefresh.token.refresh_token).toBeDefined();
+    });
+
+    it('should refresh token with dont have user', async () => {
+      const findNullSpy = jest
+        .spyOn(repositoryMock, 'findOneBy')
+        .mockResolvedValue(null);
+
+      await expect(service.refreshTokens(userName, rt)).rejects.toThrow(
+        new UnauthorizedException({
+          message: 'Access Denied',
+        }),
+      );
+
+      expect(findNullSpy).toBeCalled();
+    });
+
+    it('should refresh token with invalid Hash', async () => {
+      await expect(
+        service.refreshTokens(userName, 'InvalidHashInParameter'),
+      ).rejects.toThrow(
+        new UnauthorizedException({
+          message: 'Access Denied - No Matches',
+        }),
+      );
+    });
+
+    it('should refresh token user not active and return error', async () => {
+      const oneUserInactive = {
+        username: userName,
+        password: hash,
+        name: faker.name.fullName(),
+        isActive: false,
+        hashedRt: newHashedRt,
+      };
+
+      const findSpy = jest
+        .spyOn(repositoryMock, 'findOneBy')
+        .mockResolvedValue(oneUserInactive as User);
+
+      await expect(service.refreshTokens(userName, rt)).rejects.toThrow(
+        new UnauthorizedException({
+          message: 'Access Denied - User not is active',
+        }),
+      );
+
+      expect(findSpy).toBeCalled();
+    });
+  });
+  describe('ValidateToken', () => {
+    it('should validate token invalid and return error', async () => {
+      const validateSpy = jest
+        .spyOn(jwtService, 'verify')
+        .mockImplementationOnce(() => Promise.resolve());
+
+      await service.validateToken(
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImNyaXN0aWFuLmFtYXJhbCIsImlkZW50aWZpYyI6ImU2OTU2ZjZkLTI5MDUtNDNhNi05ZTZjLTkxYzM5ZjExZjQ2YyIsImlhdCI6MTY2ODY1NzUxMCwiZXhwIjoxNjY5MDg5NTEwfQ.75ReyhUhD2KrzZ1kVmUKpgMeoaYxg12tpOpxhMa9dsU',
+      );
+      expect(validateSpy).toBeCalled();
     });
   });
 });

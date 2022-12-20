@@ -65,7 +65,7 @@ export class UserService implements OnModuleInit {
       username: username.toLowerCase().trim(),
     });
 
-    if (!user) throw new NotFoundException(`Username not found: (${username})`);
+    //if (!user) throw new NotFoundException(`Username not found: (${username})`);
 
     //delete user.password;
     return user;
