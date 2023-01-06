@@ -136,6 +136,7 @@ describe('AppController (e2e)', () => {
         .set('Authorization', `Bearer ${jwtToken}`)
         .expect(HttpStatus.CREATED);
 
+      expect(resp.body._id).toBeDefined();
       expect(resp.body._id).not.toBeNull();
 
       expect(resp.body.username).toEqual(
@@ -198,6 +199,7 @@ describe('AppController (e2e)', () => {
         .set('Authorization', `Bearer ${jwtToken}`)
         .expect(HttpStatus.OK);
 
+      expect(resp.body._id).toBeDefined();
       expect(resp.body._id).not.toBeNull();
       expect(resp.body.password).not.toBeDefined();
       expect(resp.body.username).toEqual(
@@ -217,6 +219,7 @@ describe('AppController (e2e)', () => {
         .set('Authorization', `Bearer ${jwtToken}`)
         .expect(HttpStatus.OK);
 
+      expect(resp.body._id).toBeDefined();
       expect(resp.body._id).not.toBeNull();
       expect(resp.body._id).toEqual(_id);
       expect(resp.body.password).not.toBeDefined();
@@ -240,6 +243,7 @@ describe('AppController (e2e)', () => {
       expect(resp.body.length).toBeGreaterThanOrEqual(1);
 
       const item = resp.body[0];
+      expect(item._id).toBeDefined();
       expect(item._id).not.toBeNull();
       expect(item.password).not.toBeDefined();
       expect(item.username).toBeDefined();
@@ -270,6 +274,7 @@ describe('AppController (e2e)', () => {
       expect(resp.body.username).toEqual(
         userValid.username.trim().toLocaleLowerCase(),
       );
+      expect(resp.body._id).toBeDefined();
       expect(resp.body._id).not.toBeNull();
 
       _id = resp.body._id;

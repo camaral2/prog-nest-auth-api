@@ -103,6 +103,7 @@ describe('Auth (e2e)', () => {
           .set('Authorization', `Bearer ${jwtToken}`)
           .expect(HttpStatus.OK);
 
+        expect(resp.body._id).toBeDefined();
         expect(resp.body._id).not.toBeNull();
         expect(resp.body.password).not.toBeDefined();
         expect(resp.body.username).toEqual(username.trim().toLocaleLowerCase());
@@ -174,6 +175,7 @@ describe('Auth (e2e)', () => {
         .set('Authorization', `Bearer ${newJwtToken}`)
         .expect(HttpStatus.OK);
 
+      expect(resp.body._id).toBeDefined();
       expect(resp.body._id).not.toBeNull();
       expect(resp.body.password).not.toBeDefined();
       expect(resp.body.username).toEqual(username.trim().toLocaleLowerCase());
@@ -200,6 +202,7 @@ describe('Auth (e2e)', () => {
         .set('Authorization', `Bearer ${newJwtToken}`)
         .expect(HttpStatus.OK);
 
+      expect(resp.body._id).toBeDefined();
       expect(resp.body._id).not.toBeNull();
       expect(resp.body.password).not.toBeDefined();
       expect(resp.body.username).toEqual(username.trim().toLocaleLowerCase());
@@ -224,6 +227,7 @@ describe('Auth (e2e)', () => {
         .set('Authorization', `Bearer ${newJwtToken}`)
         .expect(HttpStatus.OK);
 
+      expect(respLogout.body._id).toBeDefined();
       expect(respLogout.body._id).not.toBeNull();
       expect(respLogout.body.password).not.toBeDefined();
       expect(respLogout.body.username).toEqual(

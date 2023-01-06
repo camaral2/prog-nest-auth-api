@@ -103,8 +103,8 @@ export class AuthService {
     }
   }
 
-  validateToken(jwt: string) {
-    return this.jwtService.verify(jwt);
+  async validateToken(jwt: string) {
+    return await this.jwtService.verify(jwt);
   }
 
   private createToken(userName: string): tokens {

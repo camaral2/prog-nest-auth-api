@@ -33,8 +33,16 @@ export class UserService implements OnModuleInit {
   }
 
   async create(createUserDto: CreateUserDto): Promise<User> {
-    const user = await this.dtoToUser(createUserDto, null);
-    return await this.usersRepository.save(user);
+    const user = new User();
+
+    user._id = uuid.v4();
+    user.username = createUserDto.username.toLowerCase().trim();
+    user.name = createUserDto.name;
+    user.isActive = true;
+    user.password = await this.hashPassword(createUserDto);
+
+    const newUser = await this.usersRepository.create(user);
+    return newUser;
   }
 
   async findAll(): Promise<User[]> {
@@ -85,8 +93,10 @@ export class UserService implements OnModuleInit {
     id: string,
     updateUserDto: UpdateUserDto,
   ): Promise<returnDeleteUpdateT> {
-    const userFind = await this.findOneId(id);
-    const user = await this.dtoToUser(updateUserDto as CreateUserDto, userFind);
+    const user = await this.findOneId(id);
+
+    user.name = updateUserDto.name;
+    user.isActive = updateUserDto.isActive;
 
     const ret = await this.usersRepository.update(id, user);
 
@@ -118,26 +128,5 @@ export class UserService implements OnModuleInit {
     const saltOrRounds = 10;
     const hash = await bcrypt.hash(user.password + user.username, saltOrRounds);
     return hash;
-  }
-
-  private async dtoToUser(
-    userDto: CreateUserDto,
-    userObj: User,
-  ): Promise<User> {
-    let user: User;
-
-    if (userObj) user = userObj as User;
-    else {
-      user = User.create();
-      user._id = uuid.v4();
-    }
-
-    user.username = userDto.username.toLowerCase().trim();
-    user.name = userDto.name;
-    user.password = await this.hashPassword(userDto);
-
-    if (user.isActive == undefined) user.isActive = true;
-
-    return user;
   }
 }
