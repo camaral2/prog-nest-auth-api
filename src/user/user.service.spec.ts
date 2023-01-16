@@ -4,7 +4,6 @@ import { UnauthorizedException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './entities/user.entity';
 import { UserService } from './user.service';
 import { faker } from '@faker-js/faker';
@@ -32,8 +31,11 @@ describe('UserService', () => {
   let userRepository: Repository<User>;
 
   const mockUserRepository = () => ({
-    find: jest.fn().mockReturnValue(listUserMock),
-    create: jest.fn().mockReturnValue(userMock),
+    find: jest.fn(() => Promise.resolve(listUserMock)),
+    create: jest.fn(() => Promise.resolve(userMock)),
+    save: jest.fn(() => Promise.resolve(userMock)),
+    new: jest.fn().mockResolvedValue(userMock),
+    constructor: jest.fn().mockResolvedValue(userMock),
   });
 
   beforeEach(async () => {
@@ -48,8 +50,7 @@ describe('UserService', () => {
     }).compile();
 
     service = module.get<UserService>(UserService);
-    //userRepository = module.get<Repository<User>>(getRepositoryToken(User));
-    userRepository = await module.get(getRepositoryToken(User));
+    userRepository = module.get<Repository<User>>(getRepositoryToken(User));
   });
 
   it('should be defined', () => {
@@ -60,7 +61,7 @@ describe('UserService', () => {
     it('should insert new User', async () => {
       const userRet = await service.create(userTest);
 
-      expect(userRepository.create).toBeCalled();
+      expect(userRepository.save).toBeCalled();
 
       expect(userRet._id).toBeDefined();
       expect(userRet._id).not.toBeNull();

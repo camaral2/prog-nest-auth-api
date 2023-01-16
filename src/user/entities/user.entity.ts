@@ -43,4 +43,9 @@ export class User extends BaseEntity {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  constructor(user?: Partial<User>) {
+    super();
+    Object.assign(this, user);
+  }
 }

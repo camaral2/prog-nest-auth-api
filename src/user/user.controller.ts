@@ -47,13 +47,17 @@ export class UserController {
   }
 
   @Get(':username')
-  findOne(@Param('username') username: string): Promise<User> {
-    return this.userService.findOne(username);
+  async findOne(@Param('username') username: string): Promise<User> {
+    const ret = await this.userService.findOne(username);
+    delete ret.password;
+    return ret;
   }
 
   @Get('Id/:id')
-  findOneId(@Param('id', new ParseUUIDPipe()) id: string): Promise<User> {
-    return this.userService.findOneId(id);
+  async findOneId(@Param('id', new ParseUUIDPipe()) id: string): Promise<User> {
+    const ret = await this.userService.findOneId(id);
+    delete ret.password;
+    return ret;
   }
 
   @Patch(':id')

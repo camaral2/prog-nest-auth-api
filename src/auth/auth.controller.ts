@@ -33,7 +33,8 @@ export class AuthController {
   @UseGuards(LocalAuthGuard)
   @Post('/login')
   async login(@Body() login: LoginUserDto): Promise<tokensLogin> {
-    return this.authService.login(login);
+    const ret = await this.authService.login(login);
+    return ret;
   }
 
   @MessagePattern({ role: 'auth', cmd: 'check' })

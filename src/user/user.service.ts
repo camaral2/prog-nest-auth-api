@@ -24,25 +24,29 @@ export class UserService implements OnModuleInit {
 
   async onModuleInit(): Promise<void> {
     const users = await this.findAll();
-    if (users.length == 0)
-      await this.create({
-        username: 'cristian.amaral',
-        name: 'Cristian dos Santos Amaral',
-        password: 'teste_12',
-      });
+
+    if (users.length == 0 || !users || users == undefined || users == null) {
+      try {
+        await this.create({
+          username: 'cristian.amaral',
+          name: 'Cristian dos Santos Amaral',
+          password: 'teste_12',
+        });
+      } catch (error) {
+        console.dir(error);
+      }
+    }
   }
 
   async create(createUserDto: CreateUserDto): Promise<User> {
-    const user = new User();
+    const user = new User(createUserDto);
 
     user._id = uuid.v4();
     user.username = createUserDto.username.toLowerCase().trim();
-    user.name = createUserDto.name;
     user.isActive = true;
     user.password = await this.hashPassword(createUserDto);
 
-    const newUser = await this.usersRepository.create(user);
-    return newUser;
+    return await this.usersRepository.save(user);
   }
 
   async findAll(): Promise<User[]> {

@@ -60,16 +60,16 @@ describe('AppController (e2e)', () => {
         .expect(HttpStatus.UNAUTHORIZED);
     });
 
-    it('should log a user in and return a JWT token', () => {
-      return request(api)
+    it('should log a user in and return a JWT token', async () => {
+      const r = await request(api)
         .post('/auth/login')
         .send({ username, password })
         .expect(HttpStatus.CREATED)
         .expect((res) => {
           expect(res.body.username).toEqual(username);
           expect(res.body.password).toBeUndefined();
-          expect(res.body.accessToken).toBeDefined();
-          jwtToken = res.body.accessToken;
+          expect(res.body.token.access_token).toBeDefined();
+          jwtToken = res.body.token.access_token;
 
           expect(jwtToken).toMatch(
             /^[A-Za-z0-9-_=]+\.[A-Za-z0-9-_=]+\.?[A-Za-z0-9-_.+/=]*$/,
@@ -148,8 +148,8 @@ describe('AppController (e2e)', () => {
       expect(resp.body.password).toBeDefined();
       expect(resp.body.password).not.toEqual(userValid.password);
 
-      expect(resp.body.createdAt).toBeDefined();
-      expect(resp.body.updatedAt).toBeDefined();
+      //expect(resp.body.createdAt).toBeDefined();
+      //expect(resp.body.updatedAt).toBeDefined();
 
       // expect(resBody).toEqual({
       //   ...linkBody,

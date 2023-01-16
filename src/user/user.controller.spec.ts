@@ -84,7 +84,7 @@ describe('UserController', () => {
 
   describe('Update e Delete User', () => {
     it('Should update an user', async () => {
-      const ret = await controller.update(id, userMock);
+      const ret = await controller.update(id, userMock as UpdateUserDto);
 
       expect(service.update).toHaveBeenCalled();
       expect(ret).toMatchObject(userUpdateDeleteMock);

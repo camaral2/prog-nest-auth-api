@@ -56,12 +56,12 @@ describe('Auth (e2e)', () => {
 
         expect(res.body.id).toBeDefined();
         expect(res.body.username).toBeDefined();
-        expect(res.body.accessToken).toBeDefined();
-        expect(res.body.refreshToken).toBeDefined();
+        expect(res.body.token.access_token).toBeDefined();
+        expect(res.body.token.refresh_token).toBeDefined();
 
         id = res.body.id;
-        jwtToken = res.body.accessToken;
-        rtToken = res.body.refreshToken;
+        jwtToken = res.body.token.access_token;
+        rtToken = res.body.token.refresh_token;
 
         expect(jwtToken).toMatch(
           /^[A-Za-z0-9-_=]+\.[A-Za-z0-9-_=]+\.?[A-Za-z0-9-_.+/=]*$/,
@@ -77,8 +77,7 @@ describe('Auth (e2e)', () => {
           .send({ username, password: 'wrong' })
           .expect(HttpStatus.UNAUTHORIZED);
 
-        expect(response.body.accessToken).not.toBeDefined();
-        expect(response.body.refreshToken).not.toBeDefined();
+        expect(response.body.token).toBeUndefined();
       });
 
       it('fails to authenticate user that does not exist', async () => {
@@ -87,8 +86,7 @@ describe('Auth (e2e)', () => {
           .send({ username: 'nobody@example.com', password })
           .expect(HttpStatus.UNAUTHORIZED);
 
-        expect(response.body.accessToken).not.toBeDefined();
-        expect(response.body.refreshToken).not.toBeDefined();
+        expect(response.body.token).not.toBeDefined();
       });
     });
 
@@ -126,11 +124,11 @@ describe('Auth (e2e)', () => {
 
       expect(resNew.body.username).toEqual(username);
       expect(resNew.body.password).toBeUndefined();
-      expect(resNew.body.accessToken).toBeDefined();
-      expect(resNew.body.refreshToken).toBeDefined();
+      expect(resNew.body.token.access_token).toBeDefined();
+      expect(resNew.body.token.refresh_token).toBeDefined();
 
-      newJwtToken = resNew.body.accessToken;
-      newRtToken = resNew.body.refreshToken;
+      newJwtToken = resNew.body.token.access_token;
+      newRtToken = resNew.body.token.refresh_token;
 
       // console.log('jwtToken:', jwtToken);
       // console.log('newJwtToken:', newJwtToken);
@@ -155,8 +153,7 @@ describe('Auth (e2e)', () => {
         .set('Authorization', `Bearer ${rtToken}`)
         .expect(HttpStatus.FORBIDDEN);
 
-      expect(response.body.accessToken).not.toBeDefined();
-      expect(response.body.refreshToken).not.toBeDefined();
+      expect(response.body.token).not.toBeDefined();
     });
 
     it('fails to authenticate refresh token with fail token', async () => {
@@ -165,8 +162,7 @@ describe('Auth (e2e)', () => {
         .set('Authorization', `Bearer ${rtToken}x`)
         .expect(HttpStatus.UNAUTHORIZED);
 
-      expect(response.body.accessToken).not.toBeDefined();
-      expect(response.body.refreshToken).not.toBeDefined();
+      expect(response.body.token).not.toBeDefined();
     });
 
     it('gets protected resource with jwt authenticated new after refresh token', async () => {
