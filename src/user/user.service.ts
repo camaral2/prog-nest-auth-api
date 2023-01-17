@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
   OnModuleInit,
 } from '@nestjs/common';
@@ -58,17 +59,6 @@ export class UserService implements OnModuleInit {
     return arr;
   }
 
-  async findOneLogin(username: string): Promise<User> {
-    if (!username || username.trim().length === 0 || username == undefined)
-      throw new BadRequestException('username is empty');
-
-    const user = await this.usersRepository.findOneBy({
-      username: username.toLowerCase().trim(),
-    });
-
-    return user;
-  }
-
   async findOne(username: string): Promise<User> {
     if (!username || username.trim().length === 0 || username == undefined)
       throw new BadRequestException('username is empty');
@@ -77,9 +67,6 @@ export class UserService implements OnModuleInit {
       username: username.toLowerCase().trim(),
     });
 
-    //if (!user) throw new NotFoundException(`Username not found: (${username})`);
-
-    //delete user.password;
     return user;
   }
 
@@ -101,8 +88,9 @@ export class UserService implements OnModuleInit {
 
     user.name = updateUserDto.name;
     user.isActive = updateUserDto.isActive;
+    user.updatedAt = new Date();
 
-    const ret = await this.usersRepository.update(id, user);
+    const ret = await this.usersRepository.update({ _id: id }, user);
 
     if (ret.affected > 0) return { result: ret.raw.result };
     else throw new BadRequestException('user not updated');

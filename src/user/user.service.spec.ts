@@ -1,6 +1,6 @@
 //https://circleci.com/blog/getting-started-with-nestjs-and-automatic-testing/
 //https://izolabs.tech/2022/07/customer-module
-import { UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, UnauthorizedException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -98,6 +98,14 @@ describe('UserService', () => {
       expect(userRepository.find).toBeCalled();
 
       expect(ret).toEqual(listUserMock);
+    });
+
+    it('Should return error when found with empty username', async () => {
+      await expect(service.findOne('')).rejects.toThrow(
+        new BadRequestException({
+          message: 'username is empty',
+        }),
+      );
     });
   });
 });

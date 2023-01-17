@@ -8,6 +8,7 @@ import { HttpExceptionFilter } from '@baseApi/shared/filter';
 import { Repository } from 'typeorm';
 import { User } from '@baseApi/user/entities/user.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { UpdateUserDto } from '@baseApi/user/dto/update-user.dto';
 
 describe('AppController (e2e)', () => {
   let app: INestApplication;
@@ -259,6 +260,81 @@ describe('AppController (e2e)', () => {
           }),
         ]),
       );
+    });
+  });
+
+  describe('Update an user', () => {
+    let _id: string;
+    let userUpdate;
+    let updatedAt;
+
+    it('Found an user', async () => {
+      const resp = await request(api)
+        .get(`/user/${userValid.username}`)
+        .set('Authorization', `Bearer ${jwtToken}`)
+        .expect(HttpStatus.OK);
+
+      expect(resp.body.username).toEqual(
+        userValid.username.trim().toLocaleLowerCase(),
+      );
+      expect(resp.body._id).toBeDefined();
+      expect(resp.body._id).not.toBeNull();
+
+      _id = resp.body._id;
+      userUpdate = new UpdateUserDto(resp.body);
+      userUpdate.name = faker.name.fullName();
+      userUpdate.isActive = false;
+
+      updatedAt = resp.body.updatedAt;
+    });
+
+    it('Update an user - should handle not found', async () => {
+      const _idFaker = faker.datatype.uuid();
+      const resp = await request(api)
+        .patch(`/user/${_idFaker}`)
+        .set('Authorization', `Bearer ${jwtToken}`)
+        .send(userUpdate)
+        .expect(HttpStatus.NOT_FOUND);
+
+      expect(resp.body.error).toBe(`Id not found: (${_idFaker})`);
+    });
+
+    it('To Validate action not of update an user', async () => {
+      const resp = await request(api)
+        .get(`/user/Id/${_id}`)
+        .set('Authorization', `Bearer ${jwtToken}`)
+        .expect(HttpStatus.OK);
+
+      expect(resp.body.username).toEqual(
+        userValid.username.trim().toLocaleLowerCase(),
+      );
+      expect(resp.body.name).not.toEqual(userUpdate.name);
+      expect(resp.body.isActive).not.toEqual(userUpdate.isActive);
+      expect(resp.body.updatedAt).toEqual(updatedAt);
+    });
+
+    it('Update an user', async () => {
+      const resp = await request(api)
+        .patch(`/user/${_id}`)
+        .set('Authorization', `Bearer ${jwtToken}`)
+        .send(userUpdate)
+        .expect(HttpStatus.OK);
+
+      expect(resp.body.result.ok).toEqual(1);
+    });
+
+    it('To Validate action of update an user', async () => {
+      const resp = await request(api)
+        .get(`/user/Id/${_id}`)
+        .set('Authorization', `Bearer ${jwtToken}`)
+        .expect(HttpStatus.OK);
+
+      expect(resp.body.username).toEqual(
+        userValid.username.trim().toLocaleLowerCase(),
+      );
+      expect(resp.body.name).toEqual(userUpdate.name);
+      expect(resp.body.isActive).toEqual(userUpdate.isActive);
+      expect(resp.body.updatedAt).not.toEqual(updatedAt);
     });
   });
 

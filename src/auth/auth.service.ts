@@ -22,7 +22,7 @@ export class AuthService {
   ) {}
 
   async validateUser(login: LoginUserDto): Promise<User> {
-    const user = await this.userService.findOneLogin(login.username);
+    const user = await this.userService.findOne(login.username);
 
     if (!user) {
       throw new UnauthorizedException({
