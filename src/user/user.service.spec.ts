@@ -1,6 +1,10 @@
 //https://circleci.com/blog/getting-started-with-nestjs-and-automatic-testing/
 //https://izolabs.tech/2022/07/customer-module
-import { BadRequestException, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -32,6 +36,7 @@ describe('UserService', () => {
 
   const mockUserRepository = () => ({
     find: jest.fn(() => Promise.resolve(listUserMock)),
+    findOne: jest.fn(() => Promise.resolve(userMock)),
     create: jest.fn(() => Promise.resolve(userMock)),
     save: jest.fn(() => Promise.resolve(userMock)),
     new: jest.fn().mockResolvedValue(userMock),
@@ -91,7 +96,7 @@ describe('UserService', () => {
     });
   });
 
-  describe('Find user', () => {
+  describe('Find user of username', () => {
     it('Should return an user', async () => {
       const ret = await service.findAll();
 
@@ -106,6 +111,37 @@ describe('UserService', () => {
           message: 'username is empty',
         }),
       );
+    });
+  });
+
+  describe('Find user of Id', () => {
+    it('Should return an user', async () => {
+      const ret = await service.findOneId(userMock._id);
+
+      expect(userRepository.findOne).toBeCalled();
+      expect(ret).toEqual(userMock);
+    });
+
+    it('Should return error when found Id not exists', async () => {
+      const findSpyNotExists = jest
+        .spyOn(userRepository, 'findOne')
+        .mockImplementationOnce(() => Promise.resolve(null));
+
+      await expect(service.findOneId('0000000000')).rejects.toThrow(
+        new NotFoundException({
+          message: 'Id not found: (0000000000)',
+        }),
+      );
+      expect(findSpyNotExists).toBeCalled();
+    });
+
+    it('Should return error when found with empty Id', async () => {
+      await expect(service.findOneId('')).rejects.toThrow(
+        new BadRequestException({
+          message: 'id is empty',
+        }),
+      );
+      expect(userRepository.findOne).not.toBeCalled();
     });
   });
 });
