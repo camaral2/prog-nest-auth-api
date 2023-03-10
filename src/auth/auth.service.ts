@@ -2,6 +2,7 @@ import { UserService } from '../user/user.service';
 import {
   ForbiddenException,
   Injectable,
+  Logger,
   UnauthorizedException,
 } from '@nestjs/common';
 import { LoginUserDto } from '../auth/dto/login-user.dto';
@@ -104,7 +105,12 @@ export class AuthService {
   }
 
   async validateToken(jwt: string) {
-    return await this.jwtService.verify(jwt);
+    try {
+      return await this.jwtService.verify(jwt);
+    } catch (e) {
+      Logger.log('validateToken:' + e);
+      return false;
+    }
   }
 
   private createToken(userName: string): tokens {

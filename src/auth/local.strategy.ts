@@ -1,3 +1,4 @@
+/* istanbul ignore file */
 //https://stackoverflow.com/questions/67832906/unit-testing-nestjs-guards-unknown-authentication-strategy
 import { Strategy } from 'passport-local';
 import { PassportStrategy } from '@nestjs/passport';

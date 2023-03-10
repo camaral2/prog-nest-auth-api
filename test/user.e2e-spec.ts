@@ -47,22 +47,22 @@ describe('AppController (e2e)', () => {
   });
 
   describe('POST /auth/login', () => {
-    it('Should validate the payload', () => {
-      return request(api)
+    it('Should validate the payload', async () => {
+      await request(api)
         .post('/auth/login')
         .send({})
         .expect(HttpStatus.UNAUTHORIZED);
     });
 
-    it('should return Unauthorised on bad credentials', () => {
-      return request(api)
+    it('should return Unauthorised on bad credentials', async () => {
+      await request(api)
         .post('/auth/login')
         .send({ username, password: 'incorrect' })
         .expect(HttpStatus.UNAUTHORIZED);
     });
 
     it('should log a user in and return a JWT token', async () => {
-      const r = await request(api)
+      await request(api)
         .post('/auth/login')
         .send({ username, password })
         .expect(HttpStatus.CREATED)

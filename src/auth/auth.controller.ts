@@ -17,7 +17,6 @@ import { AuthService } from './auth.service';
 import { LoginUserDto } from './dto/login-user.dto';
 import { LocalAuthGuard } from './local-auth.guard';
 import { MessagePattern } from '@nestjs/microservices';
-import { tokens } from './types/tokens-types';
 import { RtGuard } from './rt-auth.guard';
 import { tokensLogin } from './types/tokensLogin-types';
 
@@ -44,7 +43,7 @@ export class AuthController {
 
       return res;
     } catch (e) {
-      Logger.log(e);
+      Logger.log('loggerIn:' + e);
       return false;
     }
   }

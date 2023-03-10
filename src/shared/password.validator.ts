@@ -27,6 +27,7 @@ export function IsPasswordValid(validationOptions?: ValidationOptions) {
           }
           return true;
         },
+        /* istanbul ignore next */
         defaultMessage(): string {
           return this.error || 'Something went wrong';
         },

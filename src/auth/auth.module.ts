@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Global, Module, OnModuleInit } from '@nestjs/common';
 import { UserModule } from '../user/user.module';
 import { AuthService } from '../auth/auth.service';
 import { PassportModule } from '@nestjs/passport';
@@ -17,11 +17,14 @@ import 'dotenv/config';
   imports: [
     UserModule,
     PassportModule,
-    JwtModule.register({}),
+    JwtModule.register({
+      secret: process.env.SECREDT_KEY_AUTH,
+      signOptions: { expiresIn: process.env.EXPIRESIN },
+    }),
     TypeOrmModule.forFeature([User]),
   ],
   providers: [AuthService, UserService, LocalStrategy, JwtStrategy, RtStrategy],
   controllers: [AuthController],
-  exports: [PassportModule, JwtModule],
+  exports: [PassportModule, AuthService],
 })
 export class AuthModule {}

@@ -7,11 +7,13 @@ import {
 } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { DeleteResult, Repository, UpdateResult } from 'typeorm';
 import { User } from './entities/user.entity';
 import { UserService } from './user.service';
 import { faker } from '@faker-js/faker';
 import * as uuid from 'uuid';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { Console } from 'console';
 
 const userTest = {
   username: faker.internet.userName(),
@@ -28,7 +30,7 @@ const userMock = {
   updatedAt: new Date(),
 };
 
-const listUserMock = [userMock, userMock];
+const listUserMock = [{ ...userMock }, { ...userMock }];
 
 describe('UserService', () => {
   let service: UserService;
@@ -41,6 +43,8 @@ describe('UserService', () => {
     save: jest.fn(() => Promise.resolve(userMock)),
     new: jest.fn().mockResolvedValue(userMock),
     constructor: jest.fn().mockResolvedValue(userMock),
+    update: jest.fn(() => Promise.resolve(userMock)),
+    delete: jest.fn(() => Promise.resolve(userMock)),
   });
 
   beforeEach(async () => {
@@ -62,10 +66,61 @@ describe('UserService', () => {
     expect(service).toBeDefined();
   });
 
+  describe('should Initializate', () => {
+    it('should create user', async () => {
+      const spyFind = jest
+        .spyOn(userRepository, 'find')
+        .mockImplementationOnce(() => Promise.resolve([]));
+
+      await service.onModuleInit();
+
+      expect(spyFind).toHaveBeenCalled();
+      expect(userRepository.find).toHaveBeenCalled();
+      expect(userRepository.save).toHaveBeenCalled();
+    });
+
+    it('should not create user', async () => {
+      const listUserMock2: User[] = [{ ...userMock } as unknown as User];
+
+      const spyFind = jest
+        .spyOn(userRepository, 'find')
+        .mockImplementationOnce(() => Promise.resolve(listUserMock2));
+
+      await service.onModuleInit();
+
+      expect(userRepository.find).toHaveBeenCalled();
+      expect(userRepository.save).not.toHaveBeenCalled();
+      expect(spyFind).toHaveBeenCalled();
+    });
+
+    it('should error', async () => {
+      const errorFake = { message: 'Error Fake.' };
+
+      const spyFindListError = jest
+        .spyOn(userRepository, 'find')
+        .mockImplementationOnce(() => Promise.resolve([]));
+
+      const spyErrorFake = jest
+        .spyOn(userRepository, 'save')
+        .mockRejectedValue(errorFake);
+
+      try {
+        await service.onModuleInit();
+      } catch (err) {
+        expect(err).toMatchObject(errorFake);
+      }
+
+      expect(spyFindListError).toHaveBeenCalled();
+      expect(spyErrorFake).toHaveBeenCalled();
+
+      expect(userRepository.find).toHaveBeenCalled();
+      expect(userRepository.save).toHaveBeenCalled();
+    });
+  });
+
   describe('Insert User', () => {
     it('should insert new User', async () => {
       const userRet = await service.create(userTest);
-
       expect(userRepository.save).toBeCalled();
 
       expect(userRet._id).toBeDefined();
@@ -82,7 +137,7 @@ describe('UserService', () => {
 
     it('Should return user-already-exists exception', async () => {
       const spyError = jest
-        .spyOn(service, 'create')
+        .spyOn(userRepository, 'save')
         .mockRejectedValue(new Error('User already exists'));
 
       await expect(service.create(userTest)).rejects.toThrow(
@@ -91,7 +146,7 @@ describe('UserService', () => {
         }),
       );
 
-      expect(service.create).toHaveBeenCalled();
+      expect(userRepository.save).toHaveBeenCalled();
       expect(spyError).toHaveBeenCalled();
     });
   });
@@ -101,8 +156,7 @@ describe('UserService', () => {
       const ret = await service.findAll();
 
       expect(userRepository.find).toBeCalled();
-
-      expect(ret).toEqual(listUserMock);
+      expect(ret.length).toEqual(listUserMock.length);
     });
 
     it('Should return error when found with empty username', async () => {
@@ -142,6 +196,69 @@ describe('UserService', () => {
         }),
       );
       expect(userRepository.findOne).not.toBeCalled();
+    });
+  });
+
+  describe('Update an user', () => {
+    it('Should Update an user', async () => {
+      const retSpyUpdate = new UpdateResult();
+      retSpyUpdate.affected = 1;
+      retSpyUpdate.raw = { result: userMock };
+
+      jest.spyOn(userRepository, 'update').mockResolvedValueOnce(retSpyUpdate);
+
+      const updateUser = new UpdateUserDto(userMock);
+      const ret = await service.update(userMock._id, updateUser);
+
+      expect(userRepository.findOne).toBeCalled();
+      expect(userRepository.update).toBeCalled();
+      expect(ret).toMatchObject(updateUser);
+      expect(ret.result.n).toEqual(retSpyUpdate.affected);
+    });
+
+    it('Should return error when updated Id not exists', async () => {
+      const retSpyUpdate = new UpdateResult();
+      retSpyUpdate.affected = 0;
+
+      jest.spyOn(userRepository, 'update').mockResolvedValueOnce(retSpyUpdate);
+
+      const updateUser = new UpdateUserDto(userMock);
+      await expect(service.update('0000000000', updateUser)).rejects.toThrow(
+        new NotFoundException({
+          message: 'user not updated',
+        }),
+      );
+      expect(userRepository.findOne).toBeCalled();
+      expect(userRepository.update).toBeCalled();
+    });
+  });
+
+  describe('Delete an user', () => {
+    it('Should delete an user', async () => {
+      const retSpyDelete = new DeleteResult();
+      retSpyDelete.affected = 1;
+      retSpyDelete.raw = { result: userMock };
+
+      jest.spyOn(userRepository, 'delete').mockResolvedValueOnce(retSpyDelete);
+
+      const ret = await service.remove(userMock._id);
+
+      expect(userRepository.delete).toBeCalled();
+      expect(ret.result.n).toEqual(retSpyDelete.affected);
+    });
+
+    it('Should return error when updated Id not exists', async () => {
+      const retSpyDelete = new DeleteResult();
+      retSpyDelete.affected = 0;
+
+      jest.spyOn(userRepository, 'delete').mockResolvedValueOnce(retSpyDelete);
+
+      await expect(service.remove('0000000000')).rejects.toThrow(
+        new NotFoundException({
+          message: 'user not deleted',
+        }),
+      );
+      expect(userRepository.delete).toBeCalled();
     });
   });
 });

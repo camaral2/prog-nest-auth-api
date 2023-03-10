@@ -1,7 +1,6 @@
 import {
   BadRequestException,
   Injectable,
-  InternalServerErrorException,
   NotFoundException,
   OnModuleInit,
 } from '@nestjs/common';
@@ -34,7 +33,7 @@ export class UserService implements OnModuleInit {
           password: 'teste_12',
         });
       } catch (error) {
-        console.dir(error);
+        console.log(error);
       }
     }
   }
@@ -47,15 +46,24 @@ export class UserService implements OnModuleInit {
     user.isActive = true;
     user.password = await this.hashPassword(createUserDto);
 
-    return await this.usersRepository.save(user);
+    const ret = await this.usersRepository.save(user);
+    return ret;
   }
 
   async findAll(): Promise<User[]> {
+    //const arr = JSON.parse(JSON.stringify(await this.usersRepository.find()));
+    //const arrBase = await this.usersRepository.find();
+    //const arr = arrBase.slice();
+    //const arr = Array.from(arrBase);
+    //const arr = { ...arrBase };
+
     const arr = await this.usersRepository.find();
+
     arr.forEach((object) => {
       delete object.password;
       delete object.hashedRt;
     });
+
     return arr;
   }
 
@@ -92,14 +100,15 @@ export class UserService implements OnModuleInit {
 
     const ret = await this.usersRepository.update({ _id: id }, user);
 
-    if (ret.affected > 0) return { result: ret.raw.result };
+    if (ret.affected > 0)
+      return { result: { n: ret.affected, ok: ret.affected } };
     else throw new BadRequestException('user not updated');
   }
 
   async remove(id: string): Promise<returnDeleteUpdateT> {
     const ret = await this.usersRepository.delete({ _id: id });
     if (ret.affected > 0) {
-      return { result: ret.raw.result };
+      return { result: { n: ret.affected, ok: ret.affected } };
     } else throw new BadRequestException('user not deleted');
   }
 
@@ -122,3 +131,20 @@ export class UserService implements OnModuleInit {
     return hash;
   }
 }
+
+// function deepClone(original) {
+//   if (original instanceof RegExp) {
+//     return new RegExp(original);
+//   } else if (original instanceof Date) {
+//     return new Date(original.getTime());
+//   } else if (Array.isArray(original)) {
+//     return original.map(deepClone);
+//   } else if (typeof original === 'object' && original !== null) {
+//     const clone = {};
+//     Object.keys(original).forEach((k) => {
+//       clone[k] = deepClone(original[k]);
+//     });
+//     return clone;
+//   }
+//   return original;
+// }
