@@ -4,6 +4,17 @@ on:
   push:
   pull_request:
 
+env:
+  PORT: ${{ vars.PORT }}
+  MONGO_URL: ${{ vars.MONGO_URL }}
+  SECREDT_KEY_AUTH: ${{ vars.SECREDT_KEY_AUTH }}
+  EXPIRESIN: ${{ vars.EXPIRESIN }}
+  SECREDT_KEY_REFRESH: ${{ vars.SECREDT_KEY_REFRESH }}
+  EXPIRESIN_REFRESH: ${{ vars.EXPIRESIN_REFRESH }}
+  JWT_IGNORE_EXPIRATION: ${{ vars.JWT_IGNORE_EXPIRATION }}
+  PORT_MCRO: ${{ vars.PORT_MCRO }}
+  HOST_MCRO: ${{ vars.HOST_MCRO }}
+
 jobs:
   build:
     runs-on: ubuntu-latest
