@@ -5,15 +5,15 @@ on:
   pull_request:
 
 env:
-  PORT: 4000
-  MONGO_URL: mongodb://localhost:27017/db_auth_api
-  SECREDT_KEY_AUTH: B398_cv_pp!12df
-  EXPIRESIN: 60s
-  SECREDT_KEY_REFRESH: "${{env.SECREDT_KEY_AUTH }}"
-  EXPIRESIN_REFRESH: 5d
-  JWT_IGNORE_EXPIRATION: false
-  PORT_MCRO: 4010
-  HOST_MCRO: localhost
+  PORT: ${{ vars.PORT}} 
+  MONGO_URL: ${{secrets.MONGO_URL}}
+  SECREDT_KEY_AUTH: ${{secrets.SECREDT_KEY_AUTH}}
+  EXPIRESIN: ${{secrets.EXPIRESIN}} 
+  SECREDT_KEY_REFRESH: ${{ secrets.SECREDT_KEY_REFRESH}}
+  EXPIRESIN_REFRESH: ${{ secrets.EXPIRESIN_REFRESH}} 
+  JWT_IGNORE_EXPIRATION: ${{ secrets.JWT_IGNORE_EXPIRATION}} 
+  PORT_MCRO: ${{ vars.PORT_MCRO}} 
+  HOST_MCRO: ${{ vars.HOST_MCRO}} 
 
 jobs:
   build:
