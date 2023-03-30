@@ -5,15 +5,15 @@ on:
   pull_request:
 
 env:
-  PORT: ${{ env.PORT }}
-  MONGO_URL: ${{ env.MONGO_URL }}
-  SECREDT_KEY_AUTH: ${{ env.SECREDT_KEY_AUTH }}
-  EXPIRESIN: ${{ env.EXPIRESIN }}
-  SECREDT_KEY_REFRESH: ${{ env.SECREDT_KEY_REFRESH }}
-  EXPIRESIN_REFRESH: ${{ env.EXPIRESIN_REFRESH }}
-  JWT_IGNORE_EXPIRATION: ${{ env.JWT_IGNORE_EXPIRATION }}
-  PORT_MCRO: ${{ env.PORT_MCRO }}
-  HOST_MCRO: ${{ env.HOST_MCRO }}
+  PORT: 4000
+  MONGO_URL: mongodb://localhost:27017/db_auth_api
+  SECREDT_KEY_AUTH: B398_cv_pp!12df
+  EXPIRESIN: 60s
+  SECREDT_KEY_REFRESH: Hj+=Y:Zut87Yy09w1
+  EXPIRESIN_REFRESH: 5d
+  JWT_IGNORE_EXPIRATION: false
+  PORT_MCRO: 4010
+  HOST_MCRO: localhost
 
 jobs:
   build:
@@ -46,6 +46,10 @@ jobs:
       
     - name: List output files
       run: find dist/ -print
+
+    - name: Use variables
+      run: |
+        echo "SECREDT_KEY_AUTH variable : ${{ vars.SECREDT_KEY_AUTH }}"
 
     - name: Running e2e testing
       run: yarn test:e2e
