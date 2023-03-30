@@ -9,7 +9,7 @@ env:
   MONGO_URL: mongodb://localhost:27017/db_auth_api
   SECREDT_KEY_AUTH: B398_cv_pp!12df
   EXPIRESIN: 60s
-  SECREDT_KEY_REFRESH: Hj+=Y:Zut87Yy09w1
+  #SECREDT_KEY_REFRESH: Hj+=Y:Zut87Yy09w1
   EXPIRESIN_REFRESH: 5d
   JWT_IGNORE_EXPIRATION: false
   PORT_MCRO: 4010
@@ -50,6 +50,7 @@ jobs:
     - name: Use variables
       run: |
         echo "SECREDT_KEY_AUTH variable : ${{ vars.SECREDT_KEY_AUTH }}"
+        echo "SECREDT_KEY_AUTH variable : ${{env.SECREDT_KEY_AUTH }}"
 
     - name: Running e2e testing
       run: yarn test:e2e
@@ -61,6 +62,6 @@ jobs:
         username: ${{ secrets.FTP_USERNAME }}
         password: ${{ secrets.FTP_PASSWORD }}
         local-dir: ./dist/
-        server-dir: apps_nodejs/prog-nest-auth-api/
+        server-dir: ./apps_nodejs/prog-nest-auth-api/
         #git-ftp-args: '--all'
         #server-dir: ${{ secrets.FTP_APP_DIR }}
