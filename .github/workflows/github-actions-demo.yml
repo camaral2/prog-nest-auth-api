@@ -62,6 +62,6 @@ jobs:
         username: ${{ secrets.FTP_USERNAME }}
         password: ${{ secrets.FTP_PASSWORD }}
         local-dir: ./dist/
-        server-dir: ./home/trade2/apps_nodejs/prog-nest-auth-api/
+        server-dir: ./prog-nest-auth-api/
         #git-ftp-args: '--all'
         #server-dir: ${{ secrets.FTP_APP_DIR }}
