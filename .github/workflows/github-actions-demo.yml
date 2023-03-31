@@ -58,8 +58,8 @@ jobs:
     - name: 📂 Sync files
       uses: SamKirkland/FTP-Deploy-Action@4.3.3
       with:
-        server: ${{ secrets.FTP_SERVER }}
-        username: ${{ secrets.FTP_USERNAME }}
+        server: ftp.trade2.com.br
+        username: trade2
         password: ${{ secrets.FTP_PASSWORD }}
         local-dir: ./dist/
         #server-dir: ./prog-nest-auth-api/
