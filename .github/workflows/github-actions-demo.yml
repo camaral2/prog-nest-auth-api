@@ -63,4 +63,4 @@ jobs:
         remote-user: trade2
         private-ssh-key: ${{ secrets.FTP_PASSWORD }}
         source-path: ./dist/
-        destination-path: ~/apps_nodejs/prog-nest-auth-api/
+#        destination-path: ~/apps_nodejs/prog-nest-auth-api/
