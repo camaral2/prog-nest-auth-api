@@ -48,7 +48,7 @@ jobs:
       run: yarn test:e2e
 
 #https://github.com/SamKirkland/web-deploy
-    - name: 📂 Sync files
+    - name: 📂 Sync files I
       uses: SamKirkland/FTP-Deploy-Action@v4.3.4
       with:
         server: ftp.trade2.com.br
@@ -59,11 +59,21 @@ jobs:
         server-dir: ../apps_nodejs/prog-nest-auth-api/
         #git-ftp-args: '--all'
         #server-dir: ${{ secrets.FTP_APP_DIR }}
-#exclude: |
+        #exclude: |
 #          .git/**
 #          .git**
 #          .git*/**
 #          **/.git*
 #          **/.git*/**
 #          **/node_modules/**
-#          fileToExclude.txt        
+#          fileToExclude.txt
+
+    - name: 📂 Sync files II
+      uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+      with:
+        server: ftp.trade2.com.br
+        username: trade2
+        password: ${{ secrets.FTP_PASSWORD }}
+        local-dir: ./node_modules/
+        log-level: minimal
+        server-dir: ../apps_nodejs/prog-nest-auth-api/
