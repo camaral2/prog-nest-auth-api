@@ -55,7 +55,6 @@ jobs:
         username: trade2
         password: ${{ secrets.FTP_PASSWORD }}
         local-dir: ./dist/
-        log-level: minimal
         server-dir: ../apps_nodejs/prog-nest-auth-api/
         #git-ftp-args: '--all'
         #server-dir: ${{ secrets.FTP_APP_DIR }}
@@ -75,5 +74,4 @@ jobs:
         username: trade2
         password: ${{ secrets.FTP_PASSWORD }}
         local-dir: ./node_modules/
-        log-level: minimal
-        server-dir: ../apps_nodejs/prog-nest-auth-api/
+        server-dir: ../apps_nodejs/prog-nest-auth-api/node_modules/
