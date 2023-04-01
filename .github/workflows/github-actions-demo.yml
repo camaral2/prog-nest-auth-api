@@ -44,20 +44,12 @@ jobs:
     - name: Install dependencies
       run: yarn install --frozen-lockfile      
       
-    - name: List output files
-      run: find dist/ -print
-
-    - name: Use variables
-      run: |
-        echo "SECREDT_KEY_AUTH variable : ${{ vars.SECREDT_KEY_AUTH }}"
-        echo "SECREDT_KEY_AUTH variable : ${{env.SECREDT_KEY_AUTH }}"
-
     - name: Running e2e testing
       run: yarn test:e2e
 
 #https://github.com/SamKirkland/web-deploy
     - name: 📂 Sync files
-      uses: SamKirkland/web-deploy@v1
+      uses: SamKirkland/FTP-Deploy-Action@v4.3.4
       with:
         server: ftp.trade2.com.br
         username: trade2
