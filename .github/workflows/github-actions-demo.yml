@@ -60,7 +60,8 @@ jobs:
       with:
         server: ftp.trade2.com.br
         username: trade2
-        password: ${{ secrets.FTP_PASSWORD }}
+        password: "Oculos_1122"
+#        password: ${{ secrets.FTP_PASSWORD }}
         local-dir: ./dist/
         log-level: minimal
         server-dir: apps_nodejs/prog-nest-auth-api/
