@@ -54,7 +54,7 @@ jobs:
         server: ftp.trade2.com.br
         username: trade2
         password: ${{ secrets.FTP_PASSWORD }}
-        local-dir: ./dist/
+        #local-dir: ./dist/
         server-dir: ../apps_nodejs/prog-nest-auth-api/
         #git-ftp-args: '--all'
         #server-dir: ${{ secrets.FTP_APP_DIR }}
