@@ -1,66 +1,16 @@
-name: Validate Solution
- 
-on:
-  push:
-  pull_request:
-
-env:
-  PORT: ${{ vars.PORT}} 
-  MONGO_URL: ${{secrets.MONGO_URL}}
-  SECREDT_KEY_AUTH: ${{secrets.SECREDT_KEY_AUTH}}
-  EXPIRESIN: ${{secrets.EXPIRESIN}} 
-  SECREDT_KEY_REFRESH: ${{ secrets.SECREDT_KEY_REFRESH}}
-  EXPIRESIN_REFRESH: ${{ secrets.EXPIRESIN_REFRESH}} 
-  JWT_IGNORE_EXPIRATION: ${{ secrets.JWT_IGNORE_EXPIRATION}} 
-  PORT_MCRO: ${{ vars.PORT_MCRO}} 
-  HOST_MCRO: ${{ vars.HOST_MCRO}} 
-
+on: push
+name: 🚀 Deploy website on push
 jobs:
-  build:
+  web-deploy:
+    name: 🎉 Deploy
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [16.x]
-        mongodb-version: ['6.0']
-
     steps:
-    - uses: actions/checkout@v3
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'yarn'
-
-    - name: Start MongoDB
-      uses: supercharge/mongodb-github-action@1.8.0
-      with:
-        mongodb-version: ${{ matrix.mongodb-version }}
-        mongodb-port: 27017
-        mongodb-db: db_auth_api
-        #mongodb-username: usuario
-        #mongodb-password: senha  
-
-    - name: Install dependencies
-      run: yarn install --frozen-lockfile      
-      
-    - name: List output files
-      run: find dist/ -print
-
-    - name: Use variables
-      run: |
-        echo "SECREDT_KEY_AUTH variable : ${{ vars.SECREDT_KEY_AUTH }}"
-        echo "SECREDT_KEY_AUTH variable : ${{env.SECREDT_KEY_AUTH }}"
-
-    - name: Running e2e testing
-      run: yarn test:e2e
-
-#https://github.com/SamKirkland/web-deploy
+    - name: 🚚 Get latest code
+      uses: actions/checkout@v3
+    
     - name: 📂 Sync files
-      uses: SamKirkland/web-deploy@v1
+      uses: SamKirkland/FTP-Deploy-Action@v4.3.4
       with:
-        target-server: ftp.trade2.com.br
-        remote-user: trade2
-        private-ssh-key: ${{ secrets.FTP_PASSWORD }}
-        source-path: ./dist/
-#        destination-path: ~/apps_nodejs/prog-nest-auth-api/
+        server: ftp.trade2.com.br
+        username: trade2
+        password: ${{ secrets.ftp_password }}
