@@ -56,7 +56,7 @@ jobs:
         password: ${{ secrets.FTP_PASSWORD }}
         local-dir: ./dist/
         log-level: minimal
-        server-dir: apps_nodejs/prog-nest-auth-api/
+        server-dir: ./apps_nodejs/prog-nest-auth-api/
         #git-ftp-args: '--all'
         #server-dir: ${{ secrets.FTP_APP_DIR }}
 #exclude: |
