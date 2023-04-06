@@ -11,7 +11,8 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
-import * as argon from 'argon2';
+//import * as argon from 'argon2';
+import * as Hashes from 'jshashes';
 import * as uuid from 'uuid';
 import { returnDeleteUpdateT } from '@baseApi/shared/return-delete-update.type';
 
@@ -113,7 +114,13 @@ export class UserService implements OnModuleInit {
   }
 
   async updateRtHash(userName: string, rt: string): Promise<void> {
-    const hashRt = await argon.hash(rt);
+    const SHA512 = new Hashes.SHA512();
+    const hashRt = await SHA512.hex(rt);
+
+    //console.log('Salvar');
+    //console.log('rt......:', rt);
+    //console.log('hashRt..:', hashRt);
+    //const hashRt = await argon.hash(rt);
 
     await this.usersRepository.update(
       { username: userName },

@@ -18,7 +18,7 @@ const typeorm_1 = require("@nestjs/typeorm");
 const user_entity_1 = require("./entities/user.entity");
 const typeorm_2 = require("typeorm");
 const bcrypt = require("bcrypt");
-const argon = require("argon2");
+const Hashes = require("jshashes");
 const uuid = require("uuid");
 let UserService = class UserService {
     constructor(usersRepository) {
@@ -92,7 +92,8 @@ let UserService = class UserService {
             throw new common_1.BadRequestException('user not deleted');
     }
     async updateRtHash(userName, rt) {
-        const hashRt = await argon.hash(rt);
+        const SHA512 = new Hashes.SHA512();
+        const hashRt = await SHA512.b64_hmac(process.env.SECREDT_KEY_REFRESH, rt);
         await this.usersRepository.update({ username: userName }, { hashedRt: hashRt });
     }
     async updateRtLogout(userId) {

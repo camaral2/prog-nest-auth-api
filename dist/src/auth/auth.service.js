@@ -15,7 +15,7 @@ const common_1 = require("@nestjs/common");
 const jwt_1 = require("@nestjs/jwt");
 const bcrypt = require("bcrypt");
 const uuid = require("uuid");
-const argon = require("argon2");
+const Hashes = require("jshashes");
 let AuthService = class AuthService {
     constructor(userService, jwtService) {
         this.userService = userService;
@@ -70,7 +70,9 @@ let AuthService = class AuthService {
                 throw new common_1.ForbiddenException('Access Denied - User not is active');
             }
             else {
-                const rtMatches = await argon.verify(user.hashedRt, rt);
+                const SHA512 = new Hashes.SHA512();
+                const hashRt = await SHA512.b64_hmac(process.env.SECREDT_KEY_REFRESH, rt);
+                const rtMatches = hashRt === user.hashedRt;
                 if (!rtMatches) {
                     throw new common_1.ForbiddenException('Access Denied - No Matches');
                 }

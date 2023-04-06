@@ -12,7 +12,8 @@ import * as bcrypt from 'bcrypt';
 import { payloadToken } from './types/payload-token.type';
 import { tokens } from './types/tokens-types';
 import * as uuid from 'uuid';
-import * as argon from 'argon2';
+//import * as argon from 'argon2';
+import * as Hashes from 'jshashes';
 import { tokensLogin } from './types/tokensLogin-types';
 
 @Injectable()
@@ -84,7 +85,14 @@ export class AuthService {
       if (!user.isActive) {
         throw new ForbiddenException('Access Denied - User not is active');
       } else {
-        const rtMatches = await argon.verify(user.hashedRt, rt);
+        const SHA512 = new Hashes.SHA512();
+        const hashRt = await SHA512.hex(rt);
+        const rtMatches = hashRt === user.hashedRt;
+
+        //console.log('hashRt.......: ' + hashRt);
+        //console.log('user.hashedRt: ' + user.hashedRt);
+        //console.log('rtMatches....: ' + rtMatches);
+
         if (!rtMatches) {
           throw new ForbiddenException('Access Denied - No Matches');
         } else {
