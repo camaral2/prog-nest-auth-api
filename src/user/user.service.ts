@@ -10,9 +10,8 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
-import * as bcrypt from 'bcrypt';
-//import * as argon from 'argon2';
-import * as Hashes from 'jshashes';
+import { CaCripto } from 'camaral-cript';
+
 import * as uuid from 'uuid';
 import { returnDeleteUpdateT } from '@baseApi/shared/return-delete-update.type';
 
@@ -114,12 +113,11 @@ export class UserService implements OnModuleInit {
   }
 
   async updateRtHash(userName: string, rt: string): Promise<void> {
-    const SHA512 = new Hashes.SHA512();
-    const hashRt = await SHA512.hex(rt);
+    const hashRt = CaCripto(rt, process.env.SECREDT_KEY_REFRESH).hash;
 
     //console.log('Salvar');
-    //console.log('rt......:', rt);
-    //console.log('hashRt..:', hashRt);
+    //console.log('Rt para Salvar:', rt);
+    //console.log('hashRt Salvo..:', hashRt);
     //const hashRt = await argon.hash(rt);
 
     await this.usersRepository.update(
@@ -133,8 +131,11 @@ export class UserService implements OnModuleInit {
   }
 
   private async hashPassword(user: CreateUserDto): Promise<string> {
-    const saltOrRounds = 10;
-    const hash = await bcrypt.hash(user.password + user.username, saltOrRounds);
+    const hash = CaCripto(
+      user.password + user.username,
+      process.env.SECREDT_KEY_AUTH,
+    ).hash;
+
     return hash;
   }
 }

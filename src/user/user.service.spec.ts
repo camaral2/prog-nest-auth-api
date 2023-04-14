@@ -13,7 +13,6 @@ import { UserService } from './user.service';
 import { faker } from '@faker-js/faker';
 import * as uuid from 'uuid';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { Console } from 'console';
 
 const userTest = {
   username: faker.internet.userName(),

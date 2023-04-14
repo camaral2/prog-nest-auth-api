@@ -8,12 +8,11 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { RemoveOptions, Repository, SaveOptions } from 'typeorm';
 import { AuthService } from './auth.service';
 import { LoginUserDto } from './dto/login-user.dto';
-import * as bcrypt from 'bcrypt';
 import { UnauthorizedException } from '@nestjs/common';
 import { syncBuiltinESMExports } from 'module';
-//import * as argon from 'argon2';
 import * as uuid from 'uuid';
-import * as Hashes from 'jshashes';
+import { RtGuard } from './rt-auth.guard';
+import { CaCripto } from 'camaral-cript';
 
 describe('AuthService', () => {
   let service: AuthService;
@@ -27,15 +26,18 @@ describe('AuthService', () => {
   let hash;
   let newHashedRt;
 
-  const SHA512 = new Hashes.SHA512();
-
   beforeEach(async () => {
-    const saltOrRounds = 10;
+    //    process.env = {
+    //      SECREDT_KEY_AUTH: 'B398_cv_pp!12df',
+    //      EXPIRESIN: '60s',
+    //      SECREDT_KEY_REFRESH: 'Hj+=Y:Zut87Yy09w1',
+    //      EXPIRESIN_REFRESH: '5d',
+    //    };
 
-    if (!hash) hash = await bcrypt.hash(passWord + userName, saltOrRounds);
-    //if (!newHashedRt) newHashedRt = await argon.hash(rt);
-
-    if (!newHashedRt) newHashedRt = await SHA512.hex(rt);
+    if (!hash)
+      hash = CaCripto(passWord + userName, process.env.SECREDT_KEY_AUTH).hash;
+    if (!newHashedRt)
+      newHashedRt = CaCripto(rt, process.env.SECREDT_KEY_REFRESH).hash;
 
     const oneUser = {
       _id: await uuid.v4(),
@@ -44,13 +46,6 @@ describe('AuthService', () => {
       name: faker.name.fullName(),
       isActive: true,
       hashedRt: newHashedRt,
-    };
-
-    process.env = {
-      SECREDT_KEY_AUTH: 'B398_cv_pp!12df',
-      EXPIRESIN: '60s',
-      SECREDT_KEY_REFRESH: 'Hj+=Y:Zut87Yy09w1',
-      EXPIRESIN_REFRESH: '5d',
     };
 
     const module: TestingModule = await Test.createTestingModule({

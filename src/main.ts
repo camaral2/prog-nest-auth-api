@@ -14,7 +14,7 @@ import helmet from 'helmet';
 import { HttpExceptionFilter } from './shared/filter';
 //import * as csurf from 'csurf';
 //import * as cookieParser from 'cookie-parser';
-import * as session from 'express-session';
+//import * as session from 'express-session';
 //import express from 'express';
 import { Transport } from '@nestjs/microservices';
 
@@ -27,26 +27,6 @@ async function bootstrap() {
   //useContainer(app.select(AppModule), { fallbackOnErrors: true });
   app.use(helmet());
   app.useGlobalFilters(new HttpExceptionFilter());
-
-  // app.use(
-  //   session({
-  //     secret: process.env.SECREDT_KEY_SESSION,
-  //     cookie: {
-  //       httpOnly: true,
-  //       secure: true,
-  //     },
-  //   }),
-  // );
-
-  //app.use(cookieParser());
-  //app.use(
-  //  session({
-  //    secret: 'your-secret',
-  //    resave: false,
-  //    saveUninitialized: false,
-  //  }),
-  //);
-  //app.use(csurf());
 
   const config = new DocumentBuilder()
     .setTitle('Project prog-nest-auth')

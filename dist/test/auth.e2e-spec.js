@@ -5,7 +5,7 @@ const common_1 = require("@nestjs/common");
 const request = require("supertest");
 const app_module_1 = require("./../src/app.module");
 const filter_1 = require("@baseApi/shared/filter");
-const bcrypt = require("bcrypt");
+const caCript = require("camaral-cript");
 describe('Auth (e2e)', () => {
     let app;
     let api;
@@ -85,7 +85,9 @@ describe('Auth (e2e)', () => {
                 expect(resp.body.name).toBeDefined();
                 expect(resp.body.createdAt).toBeDefined();
                 expect(resp.body.updatedAt).toBeDefined();
-                const resValidToken = bcrypt.compare(resp.body.hashedRt, rtToken);
+                const resValidToken = rtToken ===
+                    caCript.caCript(resp.body.hashedRt, process.env.SECREDT_KEY_REFRESH)
+                        .hash;
                 expect(resValidToken).toBeTruthy();
             });
         });
@@ -133,7 +135,9 @@ describe('Auth (e2e)', () => {
             expect(resp.body.name).toBeDefined();
             expect(resp.body.createdAt).toBeDefined();
             expect(resp.body.updatedAt).toBeDefined();
-            const resValidToken = bcrypt.compare(resp.body.hashedRt, newRtToken);
+            const resValidToken = newRtToken ===
+                caCript.caCript(resp.body.hashedRt, process.env.SECREDT_KEY_REFRESH)
+                    .hash;
             expect(resValidToken).toBeTruthy();
         });
     });
@@ -156,7 +160,9 @@ describe('Auth (e2e)', () => {
             expect(resp.body.name).toBeDefined();
             expect(resp.body.createdAt).toBeDefined();
             expect(resp.body.updatedAt).toBeDefined();
-            const resValidToken = bcrypt.compare(resp.body.hashedRt, newRtToken);
+            const resValidToken = newRtToken ===
+                caCript.caCript(resp.body.hashedRt, process.env.SECREDT_KEY_REFRESH)
+                    .hash;
             expect(resValidToken).toBeTruthy();
         });
         it('Logout refresh token valid UserName', async () => {

@@ -8,12 +8,10 @@ import {
 import { LoginUserDto } from '../auth/dto/login-user.dto';
 import { JwtService } from '@nestjs/jwt';
 import { User } from '../user/entities/user.entity';
-import * as bcrypt from 'bcrypt';
 import { payloadToken } from './types/payload-token.type';
 import { tokens } from './types/tokens-types';
 import * as uuid from 'uuid';
-//import * as argon from 'argon2';
-import * as Hashes from 'jshashes';
+import { CaCripto } from 'camaral-cript';
 import { tokensLogin } from './types/tokensLogin-types';
 
 @Injectable()
@@ -31,12 +29,9 @@ export class AuthService {
         message: 'User not found',
       });
     }
-
-    // compare passwords
-    const passwordValid = await bcrypt.compare(
-      login.password + login.username,
-      user.password,
-    );
+    const passwordValid =
+      CaCripto(login.password + login.username, process.env.SECREDT_KEY_AUTH)
+        .hash === user.password;
 
     if (!passwordValid) {
       throw new UnauthorizedException({
@@ -85,8 +80,7 @@ export class AuthService {
       if (!user.isActive) {
         throw new ForbiddenException('Access Denied - User not is active');
       } else {
-        const SHA512 = new Hashes.SHA512();
-        const hashRt = await SHA512.hex(rt);
+        const hashRt = CaCripto(rt, process.env.SECREDT_KEY_REFRESH).hash;
         const rtMatches = hashRt === user.hashedRt;
 
         //console.log('hashRt.......: ' + hashRt);

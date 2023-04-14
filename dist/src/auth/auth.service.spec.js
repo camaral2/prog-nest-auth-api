@@ -7,10 +7,9 @@ const jwt_1 = require("@nestjs/jwt");
 const testing_1 = require("@nestjs/testing");
 const typeorm_1 = require("@nestjs/typeorm");
 const auth_service_1 = require("./auth.service");
-const bcrypt = require("bcrypt");
 const common_1 = require("@nestjs/common");
 const uuid = require("uuid");
-const Hashes = require("jshashes");
+const caCript = require("camaral-cript");
 describe('AuthService', () => {
     let service;
     let repositoryMock;
@@ -20,13 +19,12 @@ describe('AuthService', () => {
     const rt = faker_1.faker.random.alphaNumeric(30);
     let hash;
     let newHashedRt;
-    const SHA512 = new Hashes.SHA512();
     beforeEach(async () => {
         const saltOrRounds = 10;
         if (!hash)
-            hash = await bcrypt.hash(passWord + userName, saltOrRounds);
+            hash = caCript.caCript(passWord + userName, process.env.SECREDT_KEY_AUTH).hash;
         if (!newHashedRt)
-            newHashedRt = await SHA512.hex(rt);
+            newHashedRt = caCript.caCript(rt, process.env.SECREDT_KEY_REFRESH).hash;
         const oneUser = {
             _id: await uuid.v4(),
             username: userName,
@@ -104,22 +102,15 @@ describe('AuthService', () => {
     });
     describe('Login Valid', () => {
         it('should login user with valid credentials', async () => {
-            const hashSpy = jest
-                .spyOn(Hashes, 'b64_hmac')
-                .mockImplementation(() => Promise.resolve('88998899889988998899'));
             const login = { username: userName, password: passWord };
             const loginRet = await service.login(login);
             expect(repositoryMock.findOneBy).toBeCalled();
             expect(repositoryMock.update).toBeCalled();
-            expect(hashSpy).toBeCalled();
             expect(loginRet.username).toEqual(userName);
             expect(loginRet.token.access_token).toBeDefined();
             expect(loginRet.token.refresh_token).toBeDefined();
         });
         it('should login user with dont have user', async () => {
-            const hashSpy = jest
-                .spyOn(Hashes, 'hash')
-                .mockImplementation(() => Promise.resolve(''));
             const findNullSpy = jest
                 .spyOn(repositoryMock, 'findOneBy')
                 .mockResolvedValue(null);
@@ -127,13 +118,9 @@ describe('AuthService', () => {
             await expect(service.login(login)).rejects.toThrow(new common_1.UnauthorizedException({
                 message: 'Access Denied',
             }));
-            expect(hashSpy).toBeCalled();
             expect(findNullSpy).toBeCalled();
         });
         it('should login user with user not active for valid credentials', async () => {
-            const hashSpy = jest
-                .spyOn(Hashes, 'hash')
-                .mockImplementation(() => Promise.resolve(''));
             const oneUserInactive = {
                 username: userName,
                 password: hash,
@@ -147,7 +134,6 @@ describe('AuthService', () => {
             await expect(service.login(login)).rejects.toThrow(new common_1.UnauthorizedException({
                 message: 'Access Denied - User not is active',
             }));
-            expect(hashSpy).toBeCalled();
             expect(findSpy).toBeCalled();
         });
     });

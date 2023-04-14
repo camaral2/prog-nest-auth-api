@@ -21,17 +21,7 @@ describe('AppController (e2e)', () => {
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [
-        AppModule,
-        TypeOrmModule.forRoot({
-          type: 'mongodb',
-          url: process.env.MONGO_URL,
-          synchronize: true,
-          useNewUrlParser: true,
-          logging: true,
-          useUnifiedTopology: true,
-        }),
-      ],
+      imports: [AppModule],
     }).compile();
 
     app = moduleFixture.createNestApplication();

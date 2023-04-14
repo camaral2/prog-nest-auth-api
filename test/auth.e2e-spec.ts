@@ -3,8 +3,7 @@ import { HttpStatus, INestApplication, ValidationPipe } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from './../src/app.module';
 import { HttpExceptionFilter } from '@baseApi/shared/filter';
-import * as bcrypt from 'bcrypt';
-
+import { CaCripto } from 'camaral-cript';
 describe('Auth (e2e)', () => {
   let app: INestApplication;
   let api;
@@ -109,7 +108,16 @@ describe('Auth (e2e)', () => {
         expect(resp.body.createdAt).toBeDefined();
         expect(resp.body.updatedAt).toBeDefined();
 
-        const resValidToken = bcrypt.compare(resp.body.hashedRt, rtToken);
+        const hasToken = CaCripto(
+          rtToken,
+          process.env.SECREDT_KEY_REFRESH,
+        ).hash;
+
+        //console.log('Hashed Token Refresh body:', resp.body.hashedRt);
+        //console.log('rtToken:', rtToken);
+        //console.log('hasToken:', hasToken);
+
+        const resValidToken = resp.body.hashedRt === hasToken;
         expect(resValidToken).toBeTruthy();
       });
     });
@@ -179,7 +187,12 @@ describe('Auth (e2e)', () => {
       expect(resp.body.createdAt).toBeDefined();
       expect(resp.body.updatedAt).toBeDefined();
 
-      const resValidToken = bcrypt.compare(resp.body.hashedRt, newRtToken);
+      const hashRtToken = CaCripto(
+        newRtToken,
+        process.env.SECREDT_KEY_REFRESH,
+      ).hash;
+
+      const resValidToken = resp.body.hashedRt === hashRtToken;
       expect(resValidToken).toBeTruthy();
     });
   });
@@ -206,7 +219,12 @@ describe('Auth (e2e)', () => {
       expect(resp.body.createdAt).toBeDefined();
       expect(resp.body.updatedAt).toBeDefined();
 
-      const resValidToken = bcrypt.compare(resp.body.hashedRt, newRtToken);
+      const hashRtToken = CaCripto(
+        newRtToken,
+        process.env.SECREDT_KEY_REFRESH,
+      ).hash;
+
+      const resValidToken = resp.body.hashedRt === hashRtToken;
       expect(resValidToken).toBeTruthy();
     });
 

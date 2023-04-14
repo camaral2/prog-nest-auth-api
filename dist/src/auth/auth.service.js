@@ -13,9 +13,8 @@ exports.AuthService = void 0;
 const user_service_1 = require("../user/user.service");
 const common_1 = require("@nestjs/common");
 const jwt_1 = require("@nestjs/jwt");
-const bcrypt = require("bcrypt");
 const uuid = require("uuid");
-const Hashes = require("jshashes");
+const caCript = require("camaral-cript");
 let AuthService = class AuthService {
     constructor(userService, jwtService) {
         this.userService = userService;
@@ -28,7 +27,7 @@ let AuthService = class AuthService {
                 message: 'User not found',
             });
         }
-        const passwordValid = await bcrypt.compare(login.password + login.username, user.password);
+        const passwordValid = caCript.CaCripto(login.password + login.username, 'd').hash;
         if (!passwordValid) {
             throw new common_1.UnauthorizedException({
                 message: 'Invalid credentials',
@@ -70,8 +69,7 @@ let AuthService = class AuthService {
                 throw new common_1.ForbiddenException('Access Denied - User not is active');
             }
             else {
-                const SHA512 = new Hashes.SHA512();
-                const hashRt = await SHA512.b64_hmac(process.env.SECREDT_KEY_REFRESH, rt);
+                const hashRt = caCript.caCript(rt, process.env.SECREDT_KEY_AUTH).hash;
                 const rtMatches = hashRt === user.hashedRt;
                 if (!rtMatches) {
                     throw new common_1.ForbiddenException('Access Denied - No Matches');
