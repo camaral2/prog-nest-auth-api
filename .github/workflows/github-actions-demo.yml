@@ -73,10 +73,10 @@ jobs:
       uses: appleboy/scp-action@v0.1.4
       env:
         PORT: 22
+        password: ${{ secrets.FTP_PASSWORD }}
       with:
         host: ftp.trade2.com.br
         username: trade2
-        password: bar
         port: 22
         source: "package.json"
         target: "apps_nodejs/prog-nest-auth-api/"
