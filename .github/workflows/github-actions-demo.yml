@@ -60,7 +60,7 @@ jobs:
     - name: copy file via ssh password
       uses: appleboy/scp-action@master
       with:
-        host: ftp.trade2.com.br
+        host: trade2.com.br
         username: trade2
         password: ${{ secrets.FTP_PASSWORD }}
         port: 22
