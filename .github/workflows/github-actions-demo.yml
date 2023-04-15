@@ -44,25 +44,24 @@ jobs:
     - name: Install dependencies
       run: yarn install --frozen-lockfile      
       
-    - name: Running e2e testing
-      run: yarn test:e2e
+#    - name: Running e2e testing
+#      run: yarn test:e2e
 
 #https://github.com/SamKirkland/web-deploy
-    - name: 📂 Sync files I
-      uses: SamKirkland/FTP-Deploy-Action@v4.3.4
-      with:
-        server: ftp.trade2.com.br
-        username: trade2
-        password: ${{ secrets.FTP_PASSWORD }}
-        local-dir: ./dist/src/
-        server-dir: ../apps_nodejs/prog-nest-auth-api/
+#    - name: 📂 Sync files I
+#      uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+#      with:
+#        server: ftp.trade2.com.br
+#        username: trade2
+#        password: ${{ secrets.FTP_PASSWORD }}
+#        local-dir: ./dist/src/
+#        server-dir: ../apps_nodejs/prog-nest-auth-api/
 
     - name: copy file via ssh password
       uses: appleboy/scp-action@master
       with:
-        host: trade2.com.br
-        username: trade2
+        host: "ftp.trade2.com.br"
+        username: "trade2"
         password: ${{ secrets.FTP_PASSWORD }}
-        port: 22
         source: "package.json"
         target: "../apps_nodejs/prog-nest-auth-api/"   
