@@ -75,6 +75,7 @@ jobs:
         host: ftp.trade2.com.br
         username: trade2
         port: ${{ secrets.FTP_PASSWORD }}
+        INPUT_PORT: 22
         script: |
           pm2 restart server
 #          cd ~/app
@@ -93,4 +94,3 @@ jobs:
         password: Oculos_1122
         source: "package.json"
         target: "apps_nodejs/prog-nest-auth-api/"
-
