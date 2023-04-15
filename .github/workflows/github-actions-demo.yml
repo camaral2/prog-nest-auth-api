@@ -71,6 +71,11 @@ jobs:
 
     - name: Run production scripts
       uses: appleboy/ssh-action@master
+      env:
+        PORT: 22
+        HOST: ftp.trade2.com.br
+        USERNAME: trade2
+        PASSWORD: ${{ secrets.FTP_PASSWORD }}
       with:
         host: ftp.trade2.com.br
         username: trade2
