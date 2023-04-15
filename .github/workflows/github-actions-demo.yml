@@ -69,11 +69,6 @@ jobs:
 #        target: "/home/trade2/apps_nodejs/prog-nest-auth-api/"
 #        debug: true   
 
-    - name: lint
-      run: |
-        echo “Teste: ${{secrets.FTP_PASSWORD}}” | commitlint
-
-
     - name: Run production scripts
       uses: appleboy/ssh-action@master
       with:
