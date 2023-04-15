@@ -25,28 +25,28 @@ jobs:
         mongodb-version: ['6.0']
 
     steps:
-    - uses: actions/checkout@v3
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'yarn'
-
-    - name: Start MongoDB
-      uses: supercharge/mongodb-github-action@1.8.0
-      with:
-        mongodb-version: ${{ matrix.mongodb-version }}
-        mongodb-port: 27017
-        mongodb-db: db_auth_api
-        #mongodb-username: usuario
-        #mongodb-password: senha  
-
-    - name: Install dependencies
-      run: yarn install --frozen-lockfile      
-      
+#    - uses: actions/checkout@v3
+#    - name: Use Node.js ${{ matrix.node-version }}
+#      uses: actions/setup-node@v3
+#      with:
+#        node-version: ${{ matrix.node-version }}
+#        cache: 'yarn'
+#
+#    - name: Start MongoDB
+#      uses: supercharge/mongodb-github-action@1.8.0
+#      with:
+#        mongodb-version: ${{ matrix.mongodb-version }}
+#        mongodb-port: 27017
+#        mongodb-db: db_auth_api
+#        #mongodb-username: usuario
+#        #mongodb-password: senha  
+#
+#    - name: Install dependencies
+#      run: yarn install --frozen-lockfile      
+#      
 #    - name: Running e2e testing
 #      run: yarn test:e2e
-
+#
 #https://github.com/SamKirkland/web-deploy
 #    - name: 📂 Sync files I
 #      uses: SamKirkland/FTP-Deploy-Action@v4.3.4
@@ -64,4 +64,4 @@ jobs:
         username: "trade2"
         password: ${{ secrets.FTP_PASSWORD }}
         source: "package.json"
-        target: "../apps_nodejs/prog-nest-auth-api/"   
+        target: "apps_nodejs/prog-nest-auth-api/"   
