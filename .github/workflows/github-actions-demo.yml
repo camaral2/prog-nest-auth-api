@@ -73,12 +73,12 @@ jobs:
       uses: appleboy/scp-action@v0.1.4
       env:
         PORT: 22
-        password: ${{ secrets.FTP_PASSWORD }}
+        PASSWORD: Oculos_1122
+        USERNAME: trade2
       with:
         host: ftp.trade2.com.br
         username: trade2
-        password: "Oculos_1122"
-        port: 22
+        password: Oculos_1122
         source: "package.json"
         target: "apps_nodejs/prog-nest-auth-api/"
 
