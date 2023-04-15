@@ -56,3 +56,12 @@ jobs:
         password: ${{ secrets.FTP_PASSWORD }}
         local-dir: ./dist/src/
         server-dir: ../apps_nodejs/prog-nest-auth-api/
+
+    - name: 📂 Sync files II
+      uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+      with:
+        server: ftp.trade2.com.br
+        username: trade2
+        password: ${{ secrets.FTP_PASSWORD }}
+        local-dir: ./package.json
+        server-dir: ../apps_nodejs/prog-nest-auth-api/
