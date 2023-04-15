@@ -57,8 +57,9 @@ jobs:
 #        local-dir: ./dist/src/
 #        server-dir: ../apps_nodejs/prog-nest-auth-api/
 
+    - uses: actions/checkout@v0.1.4
     - name: copy file via ssh password
-      uses: appleboy/scp-action@209e8c05e0492f6ed6fe8a22dfcaefb083c4cf35
+      uses: appleboy/scp-action@v0.1.4
       with:
         host: "ftp.trade2.com.br"
         username: "trade2"
