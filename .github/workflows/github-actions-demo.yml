@@ -70,7 +70,7 @@ jobs:
 #        debug: true   
 
     - name: Run production scripts
-      uses: appleboy/ssh-action@master
+      uses: appleboy/ssh-action@v0.1.4
       env:
         PORT: 22
         HOST: ftp.trade2.com.br
