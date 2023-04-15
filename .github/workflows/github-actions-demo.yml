@@ -69,19 +69,6 @@ jobs:
 #        target: "/home/trade2/apps_nodejs/prog-nest-auth-api/"
 #        debug: true   
 
-    - name: copy file via ssh password
-      uses: appleboy/scp-action@v0.1.4
-      env:
-        PORT: 22
-        PASSWORD: Oculos_1122
-        USERNAME: trade2
-      with:
-        host: ftp.trade2.com.br
-        username: trade2
-        password: Oculos_1122
-        source: "package.json"
-        target: "apps_nodejs/prog-nest-auth-api/"
-
     - name: lint
       run: |
         echo “Teste: ${{secrets.FTP_PASSWORD}}” | commitlint
@@ -98,3 +85,17 @@ jobs:
 #          cd ~/app
 #          yarn
 #          ./node_modules/.bin/typeorm migration:run
+
+    - name: copy file via ssh password
+      uses: appleboy/scp-action@v0.1.4
+      env:
+        PORT: 22
+        PASSWORD: Oculos_1122
+        USERNAME: trade2
+      with:
+        host: ftp.trade2.com.br
+        username: trade2
+        password: Oculos_1122
+        source: "package.json"
+        target: "apps_nodejs/prog-nest-auth-api/"
+
