@@ -54,24 +54,5 @@ jobs:
         server: ftp.trade2.com.br
         username: trade2
         password: ${{ secrets.FTP_PASSWORD }}
-#        local-dir: ./dist/
+        local-dir: ./dist/
         server-dir: ../apps_nodejs/prog-nest-auth-api/
-        include: |
-          **/node_modules/**
-        #git-ftp-args: '--all'
-        #server-dir: ${{ secrets.FTP_APP_DIR }}
-#          .git/**
-#          .git**
-#          .git*/**
-#          **/.git*
-#          **/.git*/**
-#          fileToExclude.txt
-#
-#    - name: 📂 Sync files II
-#      uses: SamKirkland/FTP-Deploy-Action@v4.3.4
-#      with:
-#        server: ftp.trade2.com.br
-#        username: trade2
-#        password: ${{ secrets.FTP_PASSWORD }}
-#        local-dir: ./node_modules/
-#        server-dir: ../apps_nodejs/prog-nest-auth-api/node_modules/

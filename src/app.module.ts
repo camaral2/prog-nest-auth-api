@@ -34,8 +34,8 @@ export class AppModule implements OnModuleInit {
     console.log('PORT_MCRO:', PORT_MCRO);
     console.log('HOST_MCRO:', HOST_MCRO);
 
-    Logger.log('PORT:', PORT);
-    Logger.log('PORT_MCRO:', PORT_MCRO);
-    Logger.log('HOST_MCRO:', HOST_MCRO);
+    Logger.log('PORT:' + PORT);
+    Logger.log('PORT_MCRO:' + PORT_MCRO);
+    Logger.log('HOST_MCRO:' + HOST_MCRO);
   }
 }
