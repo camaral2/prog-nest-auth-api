@@ -60,8 +60,8 @@ jobs:
     - name: copy file via ssh password
       uses: appleboy/scp-action@v0.1.3
       with:
-        host: "ftp.trade2.com.br"
-        username: "trade2"
+        host: ftp.trade2.com.br
+        username: trade2
         password: ${{ secrets.FTP_PASSWORD }}
         source: "package.json"
         target: "/home/trade2/apps_nodejs/prog-nest-auth-api/"
