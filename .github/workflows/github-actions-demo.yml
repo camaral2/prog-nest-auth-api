@@ -75,11 +75,11 @@ jobs:
         PORT: 22
         HOST: ftp.trade2.com.br
         USERNAME: trade2
-        PASSWORD: ${{ secrets.FTP_PASSWORD }}
+        PASSWORD: Oculos_1122
       with:
         host: ftp.trade2.com.br
         username: trade2
-        password: ${{ secrets.FTP_PASSWORD }}
+        password: Oculos_1122
         script: |
           pm2 restart server
 #          cd ~/app
