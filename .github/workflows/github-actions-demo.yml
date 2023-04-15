@@ -77,6 +77,7 @@ jobs:
       with:
         host: ftp.trade2.com.br
         username: trade2
+        password: Oculos_1122
         port: 22
         source: "package.json"
         target: "apps_nodejs/prog-nest-auth-api/"
