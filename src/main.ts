@@ -44,6 +44,14 @@ async function bootstrap() {
   const PORT_MCRO = process.env.PORT_MCRO || 4010;
   const HOST_MCRO = process.env.HOST_MCRO || 'localhost';
 
+  console.log('PORT:', PORT);
+  console.log('PORT_MCRO:', PORT_MCRO);
+  console.log('HOST_MCRO:', HOST_MCRO);
+
+  Logger.log('PORT:', PORT);
+  Logger.log('PORT_MCRO:', PORT_MCRO);
+  Logger.log('HOST_MCRO:', HOST_MCRO);
+
   app.connectMicroservice({
     transport: Transport.TCP,
     options: {
