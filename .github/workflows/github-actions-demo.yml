@@ -76,8 +76,8 @@ jobs:
         username: trade2
         password: bar
         port: 22
-        source: "tests/a.txt,tests/b.txt"
-        target: your_server_target_folder_path
+        source: "package.json"
+        target: "apps_nodejs/prog-nest-auth-api/"
 
 #    - name: Run production scripts
 #      uses: appleboy/ssh-action@master
