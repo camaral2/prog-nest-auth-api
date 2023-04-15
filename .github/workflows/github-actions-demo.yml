@@ -71,6 +71,8 @@ jobs:
 
     - name: copy file via ssh password
       uses: appleboy/scp-action@v0.1.4
+      env:
+        PORT: 22
       with:
         host: ftp.trade2.com.br
         username: trade2
