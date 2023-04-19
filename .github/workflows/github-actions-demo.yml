@@ -55,7 +55,7 @@ jobs:
         username: trade2
         password: ${{ secrets.FTP_PASSWORD }}
         local-dir: ./dist/src/
-        server-dir: ../www/api
+        server-dir: ../www/api/
         #server-dir: ../apps_nodejs/prog-nest-auth-api/
 
 #    - name: copy file via ssh password
