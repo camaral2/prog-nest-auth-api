@@ -6,7 +6,6 @@ const request = require("supertest");
 const app_module_1 = require("./../src/app.module");
 const faker_1 = require("@faker-js/faker");
 const filter_1 = require("@baseApi/shared/filter");
-const typeorm_1 = require("@nestjs/typeorm");
 const update_user_dto_1 = require("@baseApi/user/dto/update-user.dto");
 describe('AppController (e2e)', () => {
     let app;
@@ -16,17 +15,7 @@ describe('AppController (e2e)', () => {
     const password = 'teste_12';
     beforeAll(async () => {
         const moduleFixture = await testing_1.Test.createTestingModule({
-            imports: [
-                app_module_1.AppModule,
-                typeorm_1.TypeOrmModule.forRoot({
-                    type: 'mongodb',
-                    url: process.env.MONGO_URL,
-                    synchronize: true,
-                    useNewUrlParser: true,
-                    logging: true,
-                    useUnifiedTopology: true,
-                }),
-            ],
+            imports: [app_module_1.AppModule],
         }).compile();
         app = moduleFixture.createNestApplication();
         app.useGlobalPipes(new common_1.ValidationPipe());

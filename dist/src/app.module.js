@@ -16,6 +16,17 @@ const user_module_1 = require("./user/user.module");
 const auth_module_1 = require("./auth/auth.module");
 require("dotenv/config");
 let AppModule = class AppModule {
+    onModuleInit() {
+        const PORT = process.env.PORT || 4000;
+        const PORT_MCRO = process.env.PORT_MCRO || 4010;
+        const HOST_MCRO = process.env.HOST_MCRO || 'localhost';
+        console.log('PORT:', PORT);
+        console.log('PORT_MCRO:', PORT_MCRO);
+        console.log('HOST_MCRO:', HOST_MCRO);
+        common_1.Logger.log('PORT:' + PORT);
+        common_1.Logger.log('PORT_MCRO:' + PORT_MCRO);
+        common_1.Logger.log('HOST_MCRO:' + HOST_MCRO);
+    }
 };
 AppModule = __decorate([
     (0, common_1.Module)({

@@ -9,7 +9,7 @@ const typeorm_1 = require("@nestjs/typeorm");
 const auth_service_1 = require("./auth.service");
 const common_1 = require("@nestjs/common");
 const uuid = require("uuid");
-const caCript = require("camaral-cript");
+const camaral_cript_1 = require("camaral-cript");
 describe('AuthService', () => {
     let service;
     let repositoryMock;
@@ -20,11 +20,10 @@ describe('AuthService', () => {
     let hash;
     let newHashedRt;
     beforeEach(async () => {
-        const saltOrRounds = 10;
         if (!hash)
-            hash = caCript.caCript(passWord + userName, process.env.SECREDT_KEY_AUTH).hash;
+            hash = (0, camaral_cript_1.CaCripto)(passWord + userName, process.env.SECREDT_KEY_AUTH).hash;
         if (!newHashedRt)
-            newHashedRt = caCript.caCript(rt, process.env.SECREDT_KEY_REFRESH).hash;
+            newHashedRt = (0, camaral_cript_1.CaCripto)(rt, process.env.SECREDT_KEY_REFRESH).hash;
         const oneUser = {
             _id: await uuid.v4(),
             username: userName,
@@ -32,12 +31,6 @@ describe('AuthService', () => {
             name: faker_1.faker.name.fullName(),
             isActive: true,
             hashedRt: newHashedRt,
-        };
-        process.env = {
-            SECREDT_KEY_AUTH: 'B398_cv_pp!12df',
-            EXPIRESIN: '60s',
-            SECREDT_KEY_REFRESH: 'Hj+=Y:Zut87Yy09w1',
-            EXPIRESIN_REFRESH: '5d',
         };
         const module = await testing_1.Test.createTestingModule({
             providers: [

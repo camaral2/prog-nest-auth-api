@@ -5,7 +5,7 @@ const common_1 = require("@nestjs/common");
 const request = require("supertest");
 const app_module_1 = require("./../src/app.module");
 const filter_1 = require("@baseApi/shared/filter");
-const caCript = require("camaral-cript");
+const camaral_cript_1 = require("camaral-cript");
 describe('Auth (e2e)', () => {
     let app;
     let api;
@@ -85,9 +85,8 @@ describe('Auth (e2e)', () => {
                 expect(resp.body.name).toBeDefined();
                 expect(resp.body.createdAt).toBeDefined();
                 expect(resp.body.updatedAt).toBeDefined();
-                const resValidToken = rtToken ===
-                    caCript.caCript(resp.body.hashedRt, process.env.SECREDT_KEY_REFRESH)
-                        .hash;
+                const hasToken = (0, camaral_cript_1.CaCripto)(rtToken, process.env.SECREDT_KEY_REFRESH).hash;
+                const resValidToken = resp.body.hashedRt === hasToken;
                 expect(resValidToken).toBeTruthy();
             });
         });
@@ -135,9 +134,8 @@ describe('Auth (e2e)', () => {
             expect(resp.body.name).toBeDefined();
             expect(resp.body.createdAt).toBeDefined();
             expect(resp.body.updatedAt).toBeDefined();
-            const resValidToken = newRtToken ===
-                caCript.caCript(resp.body.hashedRt, process.env.SECREDT_KEY_REFRESH)
-                    .hash;
+            const hashRtToken = (0, camaral_cript_1.CaCripto)(newRtToken, process.env.SECREDT_KEY_REFRESH).hash;
+            const resValidToken = resp.body.hashedRt === hashRtToken;
             expect(resValidToken).toBeTruthy();
         });
     });
@@ -160,9 +158,8 @@ describe('Auth (e2e)', () => {
             expect(resp.body.name).toBeDefined();
             expect(resp.body.createdAt).toBeDefined();
             expect(resp.body.updatedAt).toBeDefined();
-            const resValidToken = newRtToken ===
-                caCript.caCript(resp.body.hashedRt, process.env.SECREDT_KEY_REFRESH)
-                    .hash;
+            const hashRtToken = (0, camaral_cript_1.CaCripto)(newRtToken, process.env.SECREDT_KEY_REFRESH).hash;
+            const resValidToken = resp.body.hashedRt === hashRtToken;
             expect(resValidToken).toBeTruthy();
         });
         it('Logout refresh token valid UserName', async () => {
