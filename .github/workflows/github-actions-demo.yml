@@ -54,6 +54,7 @@ jobs:
         server: ${{ secrets.SSH_HOST }}
         username: ${{ secrets.SSH_USERNAME }}
         password: ${{ secrets.SSH_PASSWORD }}
+        PORT: 22
         local-dir: ./dist/src/
         server-dir: ./apps_nodejs/prog-nest-auth-api/
 
@@ -63,6 +64,7 @@ jobs:
         host: ${{ secrets.SSH_HOST }}
         username: ${{ secrets.SSH_USERNAME }}
         password: ${{ secrets.SSH_PASSWORD }}
+        PORT: 22
         source: package.json
         target: ./apps_nodejs/prog-nest-auth-api/
         debug: true   
@@ -73,6 +75,7 @@ jobs:
         host: ${{ secrets.SSH_HOST }}
         username: ${{ secrets.SSH_USERNAME }}
         password: ${{ secrets.SSH_PASSWORD }}
+        PORT: 22
         script: |
            cd ./apps_nodejs/prog-nest-auth-api/
            npm install
