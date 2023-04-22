@@ -50,32 +50,35 @@ jobs:
 #https://github.com/SamKirkland/web-deploy
     - name: 📂 Sync files I
       uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+      env:
+        PORT: 22      
       with:
         server: ${{ secrets.SSH_HOST }}
         username: ${{ secrets.SSH_USERNAME }}
         password: ${{ secrets.SSH_PASSWORD }}
-        PORT: 22
         local-dir: ./dist/src/
         server-dir: ./apps_nodejs/prog-nest-auth-api/
 
     - name: copy file via ssh password
       uses: appleboy/scp-action@v0.1.4
+      env:
+        PORT: 22
       with:
         host: ${{ secrets.SSH_HOST }}
         username: ${{ secrets.SSH_USERNAME }}
         password: ${{ secrets.SSH_PASSWORD }}
-        PORT: 22
         source: package.json
         target: ./apps_nodejs/prog-nest-auth-api/
         debug: true   
 
     - name: Run production scripts
       uses: appleboy/ssh-action@v0.1.4
+      env:
+        PORT: 22
       with:
         host: ${{ secrets.SSH_HOST }}
         username: ${{ secrets.SSH_USERNAME }}
         password: ${{ secrets.SSH_PASSWORD }}
-        PORT: 22
         script: |
            cd ./apps_nodejs/prog-nest-auth-api/
            npm install
