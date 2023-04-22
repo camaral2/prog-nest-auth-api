@@ -51,51 +51,29 @@ jobs:
     - name: 📂 Sync files I
       uses: SamKirkland/FTP-Deploy-Action@v4.3.4
       with:
-        server: ftp.trade2.com.br
-        username: trade2
-        password: ${{ secrets.FTP_PASSWORD }}
+        server: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USERNAME }}
+        password: ${{ secrets.SSH_PASSWORD }}
         local-dir: ./dist/src/
-        server-dir: ../www/api/
-        #server-dir: ../apps_nodejs/prog-nest-auth-api/
+        server-dir: ./apps_nodejs/prog-nest-auth-api/
 
-#    - name: copy file via ssh password
-#      uses: appleboy/scp-action@v0.1.4
-#      env:
-#        PORT: 22
-#      with:
-#        host: ftp.trade2.com.br
-#        username: trade2
-#        password: ${{ secrets.FTP_PASSWORD }}
-#        source: "package.json"
-#        target: "/home/trade2/apps_nodejs/prog-nest-auth-api/"
-#        debug: true   
-#
-#    - name: Run production scripts
-#      uses: appleboy/ssh-action@v0.1.4
-#      env:
-#        PORT: 22
-#        HOST: ftp.trade2.com.br
-#        USERNAME: trade2
-#        PASSWORD: ${{ secrets.FTP_PASSWORD }}
-#      with:
-#        host: ftp.trade2.com.br
-#        username: trade2
-#        password: ${{ secrets.FTP_PASSWORD }}
-#        script: |
-#          pm2 restart server
-#          cd ~/app
-#          yarn
-#          ./node_modules/.bin/typeorm migration:run
-#
-#    - name: copy file via ssh password
-#      uses: appleboy/scp-action@v0.1.4
-#      env:
-#        PORT: 22
-#        PASSWORD: ${{ secrets.FTP_PASSWORD }}
-#        USERNAME: trade2
-#      with:
-#        host: ftp.trade2.com.br
-#        username: trade2
-#        password: ${{ secrets.FTP_PASSWORD }}
-#        source: "package.json"
-#        target: "apps_nodejs/prog-nest-auth-api/"
+    - name: copy file via ssh password
+      uses: appleboy/scp-action@v0.1.4
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USERNAME }}
+        password: ${{ secrets.SSH_PASSWORD }}
+        source: package.json
+        target: ./apps_nodejs/prog-nest-auth-api/
+        debug: true   
+
+    - name: Run production scripts
+      uses: appleboy/ssh-action@v0.1.4
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USERNAME }}
+        password: ${{ secrets.SSH_PASSWORD }}
+        script: |
+           cd ./apps_nodejs/prog-nest-auth-api/
+           npm install
+           pm2 restart server
