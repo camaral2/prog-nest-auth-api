@@ -51,12 +51,13 @@ jobs:
     - name: 📂 Sync files I
       uses: SamKirkland/FTP-Deploy-Action@v4.3.4   
       with:
-        server: ${{ secrets.SSH_HOST }}
+        server: 34.125.119.88
         username: ${{ secrets.SSH_USERNAME }}
         password: ${{ secrets.SSH_PASSWORD }}
         port: 22
         local-dir: ./dist/src/
         server-dir: ./apps_nodejs/prog-nest-auth-api/
+        log-level: verbose
 #
 #    - name: copy file via ssh password
 #      uses: appleboy/scp-action@v0.1.4
