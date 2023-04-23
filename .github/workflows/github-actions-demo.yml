@@ -71,7 +71,7 @@ jobs:
         source: "dist/src/*"
         target: "apps_nodejs/prog-nest-auth-api"
         debug: true  
-        strip_components: 1
+        strip_components: 2
 
     - name: copy file package.json via ssh password
       uses: appleboy/scp-action@v0.1.4
