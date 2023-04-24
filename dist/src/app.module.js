@@ -20,9 +20,6 @@ let AppModule = class AppModule {
         const PORT = process.env.PORT || 4000;
         const PORT_MCRO = process.env.PORT_MCRO || 4010;
         const HOST_MCRO = process.env.HOST_MCRO || 'localhost';
-        console.log('PORT:', PORT);
-        console.log('PORT_MCRO:', PORT_MCRO);
-        console.log('HOST_MCRO:', HOST_MCRO);
         common_1.Logger.log('PORT:' + PORT);
         common_1.Logger.log('PORT_MCRO:' + PORT_MCRO);
         common_1.Logger.log('HOST_MCRO:' + HOST_MCRO);
