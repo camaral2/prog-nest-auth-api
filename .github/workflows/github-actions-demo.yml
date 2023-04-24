@@ -32,6 +32,9 @@ jobs:
         node-version: ${{ matrix.node-version }}
         cache: 'yarn'
 
+    - name: Install dependencies
+      run: yarn install --frozen-lockfile      
+
     - name: Start MongoDB
       uses: supercharge/mongodb-github-action@1.8.0
       with:
@@ -40,10 +43,7 @@ jobs:
         mongodb-db: db_auth_api
         #mongodb-username: usuario
         #mongodb-password: senha  
-
-    - name: Install dependencies
-      run: yarn install --frozen-lockfile      
-      
+              
     - name: Running e2e testing
       run: yarn test:e2e
 
