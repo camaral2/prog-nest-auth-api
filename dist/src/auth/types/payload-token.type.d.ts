@@ -1,4 +1,4 @@
-export declare type payloadToken = {
+export type payloadToken = {
     username: string;
     identific: string;
 };

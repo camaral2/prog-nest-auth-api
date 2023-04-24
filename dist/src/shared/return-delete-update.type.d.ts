@@ -1,4 +1,4 @@
-export declare type returnDeleteUpdateT = {
+export type returnDeleteUpdateT = {
     result: {
         n: number;
         ok: number;
