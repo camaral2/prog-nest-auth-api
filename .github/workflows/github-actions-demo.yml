@@ -97,5 +97,5 @@ jobs:
         port: 22
         script: |
            cd ./apps_nodejs/prog-nest-auth-api/
-           npm update --force
+           npm update
            pm2 restart prog-nest-auth-api
