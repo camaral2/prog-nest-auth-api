@@ -29,10 +29,6 @@ async function bootstrap() {
     const HOST_MCRO = process.env.HOST_MCRO || 'localhost';
     app.connectMicroservice({
         transport: microservices_1.Transport.TCP,
-        options: {
-            host: HOST_MCRO,
-            port: PORT_MCRO,
-        },
     });
     await app.startAllMicroservices();
     await app.listen(PORT, () => {

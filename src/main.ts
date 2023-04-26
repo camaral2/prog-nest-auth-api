@@ -32,7 +32,7 @@ async function bootstrap() {
     .setTitle('Project prog-nest-auth')
     .setDescription('The Realworld API description')
     .setVersion('1.0')
-    //.setBasePath('api')
+    .setBasePath('doc')
     .addTag('user')
     //.addBearerAuth()
     .build();
@@ -44,13 +44,16 @@ async function bootstrap() {
   const PORT_MCRO = process.env.PORT_MCRO || 4010;
   const HOST_MCRO = process.env.HOST_MCRO || 'localhost';
 
-  app.connectMicroservice({
-    transport: Transport.TCP,
-    options: {
-      host: HOST_MCRO,
-      port: PORT_MCRO,
+  app.connectMicroservice(
+    {
+      transport: Transport.TCP,
+      options: {
+        host: HOST_MCRO,
+        port: PORT_MCRO,
+      },
     },
-  });
+    { inheritAppConfig: true },
+  );
   await app.startAllMicroservices();
 
   await app.listen(PORT, () => {
