@@ -10,7 +10,12 @@ exports.AppService = void 0;
 const common_1 = require("@nestjs/common");
 let AppService = class AppService {
     getHello() {
-        return 'Hello World!';
+        return {
+            app: process.env.npm_package_name,
+            version: process.env.npm_package_version,
+            author: 'Cristian dos Santos Amaral',
+            email: process.env.npm_package_author,
+        };
     }
 };
 AppService = __decorate([

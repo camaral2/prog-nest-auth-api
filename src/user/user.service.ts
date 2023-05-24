@@ -14,6 +14,7 @@ import { CaCripto } from 'camaral-cript';
 
 import * as uuid from 'uuid';
 import { returnDeleteUpdateT } from '@baseApi/shared/return-delete-update.type';
+import logger from '../utils/logger';
 
 @Injectable()
 export class UserService implements OnModuleInit {
@@ -33,7 +34,7 @@ export class UserService implements OnModuleInit {
           password: 'teste_12',
         });
       } catch (error) {
-        console.log(error);
+        logger.error(error);
       }
     }
   }

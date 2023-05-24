@@ -4,7 +4,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import 'dotenv/config';
-import { Logger } from '@nestjs/common';
+import logger from './utils/logger';
 
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
@@ -57,7 +57,7 @@ async function bootstrap() {
   await app.startAllMicroservices();
 
   await app.listen(PORT, () => {
-    Logger.log(`Listening on PORT: ${PORT}`);
+    logger.debug(`Listening on PORT: ${PORT}`);
   });
 }
 bootstrap();

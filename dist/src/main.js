@@ -20,6 +20,7 @@ async function bootstrap() {
         .setTitle('Project prog-nest-auth')
         .setDescription('The Realworld API description')
         .setVersion('1.0')
+        .setBasePath('doc')
         .addTag('user')
         .build();
     const document = swagger_1.SwaggerModule.createDocument(app, config);
@@ -29,7 +30,11 @@ async function bootstrap() {
     const HOST_MCRO = process.env.HOST_MCRO || 'localhost';
     app.connectMicroservice({
         transport: microservices_1.Transport.TCP,
-    });
+        options: {
+            host: HOST_MCRO,
+            port: PORT_MCRO,
+        },
+    }, { inheritAppConfig: true });
     await app.startAllMicroservices();
     await app.listen(PORT, () => {
         common_1.Logger.log(`Listening on PORT: ${PORT}`);

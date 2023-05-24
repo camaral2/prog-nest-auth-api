@@ -15,8 +15,13 @@ describe('AppController', () => {
   });
 
   describe('root', () => {
-    it('should return "Hello World!"', () => {
-      expect(appController.getHello()).toBe('Hello World!');
+    it('should return "Detail of service"', () => {
+      expect(appController.getVersion()).toMatchObject({
+        app: 'prog-nest-auth',
+        author: 'Cristian dos Santos Amaral',
+        email: 'cristian_amaral@hotmail.com',
+        version: process.env.npm_package_version,
+      });
     });
   });
 });
