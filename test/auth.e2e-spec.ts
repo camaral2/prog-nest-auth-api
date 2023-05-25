@@ -36,10 +36,12 @@ describe('Auth (e2e)', () => {
   });
 
   it('/ (GET)', () => {
-    return request(app.getHttpServer())
-      .get('/')
-      .expect(HttpStatus.OK)
-      .expect('Hello World!');
+    return request(app.getHttpServer()).get('/').expect(HttpStatus.OK).expect({
+      app: 'prog-nest-auth',
+      author: 'Cristian dos Santos Amaral',
+      email: 'cristian_amaral@hotmail.com',
+      version: process.env.npm_package_version,
+    });
   });
 
   describe('Authentication', () => {
