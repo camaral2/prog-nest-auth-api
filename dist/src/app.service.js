@@ -9,12 +9,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppService = void 0;
 const common_1 = require("@nestjs/common");
 let AppService = class AppService {
-    getHello() {
+    getVersion() {
         return {
             app: process.env.npm_package_name,
             version: process.env.npm_package_version,
             author: 'Cristian dos Santos Amaral',
-            email: process.env.npm_package_author,
+            email: 'cristian_amaral@hotmail.com',
         };
     }
 };

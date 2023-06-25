@@ -19,6 +19,7 @@ const user_entity_1 = require("./entities/user.entity");
 const typeorm_2 = require("typeorm");
 const camaral_cript_1 = require("camaral-cript");
 const uuid = require("uuid");
+const logger_1 = require("../utils/logger");
 let UserService = class UserService {
     constructor(usersRepository) {
         this.usersRepository = usersRepository;
@@ -34,7 +35,7 @@ let UserService = class UserService {
                 });
             }
             catch (error) {
-                console.log(error);
+                logger_1.default.error(error);
             }
         }
     }

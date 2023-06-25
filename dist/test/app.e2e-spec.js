@@ -16,10 +16,12 @@ describe('AppController (e2e)', () => {
         await Promise.all([app.close()]);
     });
     it('/ (GET)', () => {
-        return request(app.getHttpServer())
-            .get('/')
-            .expect(200)
-            .expect('Hello World!');
+        return request(app.getHttpServer()).get('/').expect(200).expect({
+            app: 'prog-nest-auth',
+            author: 'Cristian dos Santos Amaral',
+            email: 'cristian_amaral@hotmail.com',
+            version: process.env.npm_package_version,
+        });
     });
 });
 //# sourceMappingURL=app.e2e-spec.js.map
