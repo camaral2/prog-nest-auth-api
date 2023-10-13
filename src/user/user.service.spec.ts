@@ -7,7 +7,12 @@ import {
 } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { DeleteResult, Repository, UpdateResult } from 'typeorm';
+import {
+  DeleteResult,
+  Repository,
+  SelectQueryBuilder,
+  UpdateResult,
+} from 'typeorm';
 import { User } from './entities/user.entity';
 import { UserService } from './user.service';
 import { faker } from '@faker-js/faker';
@@ -44,6 +49,13 @@ describe('UserService', () => {
     constructor: jest.fn().mockResolvedValue(userMock),
     update: jest.fn(() => Promise.resolve(userMock)),
     delete: jest.fn(() => Promise.resolve(userMock)),
+    createQueryBuilder: jest.fn(() => ({
+      andWhere: jest.fn().mockReturnThis(),
+      skip: jest.fn().mockReturnThis(),
+      take: jest.fn().mockReturnThis(),
+      getMany: jest.fn(),
+      getCount: jest.fn().mockReturnValue(0),
+    })),
   });
 
   beforeEach(async () => {
@@ -67,37 +79,47 @@ describe('UserService', () => {
 
   describe('should Initializate', () => {
     it('should create user', async () => {
-      const spyFind = jest
-        .spyOn(userRepository, 'find')
-        .mockImplementationOnce(() => Promise.resolve([]));
-
       await service.onModuleInit();
 
-      expect(spyFind).toHaveBeenCalled();
-      expect(userRepository.find).toHaveBeenCalled();
+      // expect(spyFind).toHaveBeenCalled();
+      expect(userRepository.createQueryBuilder).toHaveBeenCalled();
       expect(userRepository.save).toHaveBeenCalled();
     });
 
     it('should not create user', async () => {
       const listUserMock2: User[] = [{ ...userMock } as unknown as User];
 
-      const spyFind = jest
-        .spyOn(userRepository, 'find')
-        .mockImplementationOnce(() => Promise.resolve(listUserMock2));
+      const createQueryBuilderSpy = jest.spyOn(
+        userRepository,
+        'createQueryBuilder',
+      );
+      createQueryBuilderSpy.mockReturnValue({
+        getMany: jest.fn().mockResolvedValue(listUserMock2),
+        getCount: jest.fn().mockReturnValue(1),
+        andWhere: jest.fn().mockReturnThis(),
+        skip: jest.fn().mockReturnThis(),
+        take: jest.fn().mockReturnThis(),
+      } as unknown as SelectQueryBuilder<User>);
 
       await service.onModuleInit();
 
-      expect(userRepository.find).toHaveBeenCalled();
+      expect(userRepository.createQueryBuilder).toHaveBeenCalled();
       expect(userRepository.save).not.toHaveBeenCalled();
-      expect(spyFind).toHaveBeenCalled();
+      // expect(spyFind).toHaveBeenCalled();
     });
 
     it('should error', async () => {
       const errorFake = { message: 'Error Fake.' };
 
-      const spyFindListError = jest
-        .spyOn(userRepository, 'find')
-        .mockImplementationOnce(() => Promise.resolve([]));
+      const spyFindListError = jest.spyOn(userRepository, 'createQueryBuilder');
+
+      spyFindListError.mockReturnValue({
+        getMany: jest.fn().mockResolvedValue([]),
+        getCount: jest.fn().mockReturnValue(0),
+        andWhere: jest.fn().mockReturnThis(),
+        skip: jest.fn().mockReturnThis(),
+        take: jest.fn().mockReturnThis(),
+      } as unknown as SelectQueryBuilder<User>);
 
       const spyErrorFake = jest
         .spyOn(userRepository, 'save')
@@ -112,7 +134,7 @@ describe('UserService', () => {
       expect(spyFindListError).toHaveBeenCalled();
       expect(spyErrorFake).toHaveBeenCalled();
 
-      expect(userRepository.find).toHaveBeenCalled();
+      expect(userRepository.createQueryBuilder).toHaveBeenCalled();
       expect(userRepository.save).toHaveBeenCalled();
     });
   });
@@ -152,10 +174,21 @@ describe('UserService', () => {
 
   describe('Find user of username', () => {
     it('Should return an user', async () => {
+      const spyListUser = jest.spyOn(userRepository, 'createQueryBuilder');
+
+      spyListUser.mockReturnValue({
+        getMany: jest.fn().mockResolvedValue(listUserMock),
+        getCount: jest.fn().mockReturnValue(0),
+        andWhere: jest.fn().mockReturnThis(),
+        skip: jest.fn().mockReturnThis(),
+        take: jest.fn().mockReturnThis(),
+      } as unknown as SelectQueryBuilder<User>);
+
       const ret = await service.findAll();
 
-      expect(userRepository.find).toBeCalled();
-      expect(ret.length).toEqual(listUserMock.length);
+      expect(userRepository.createQueryBuilder).toBeCalled();
+      expect(ret.users.length).toEqual(listUserMock.length);
+      expect(spyListUser).toHaveBeenCalled();
     });
 
     it('Should return error when found with empty username', async () => {

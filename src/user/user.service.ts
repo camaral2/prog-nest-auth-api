@@ -15,6 +15,7 @@ import { CaCripto } from 'camaral-cript';
 import * as uuid from 'uuid';
 import { returnDeleteUpdateT } from '@baseApi/shared/return-delete-update.type';
 import logger from '../utils/logger';
+import { ListUserDto } from './dto/list-user-dto';
 
 @Injectable()
 export class UserService implements OnModuleInit {
@@ -24,9 +25,9 @@ export class UserService implements OnModuleInit {
   ) {}
 
   async onModuleInit(): Promise<void> {
-    const users = await this.findAll();
+    const data = await this.findAll(1, 1, null);
 
-    if (users.length == 0 || !users || users == undefined || users == null) {
+    if (!data || !data.users || data.users.length == 0) {
       try {
         await this.create({
           username: 'cristian.amaral',
@@ -51,21 +52,41 @@ export class UserService implements OnModuleInit {
     return ret;
   }
 
-  async findAll(): Promise<User[]> {
-    //const arr = JSON.parse(JSON.stringify(await this.usersRepository.find()));
-    //const arrBase = await this.usersRepository.find();
-    //const arr = arrBase.slice();
-    //const arr = Array.from(arrBase);
-    //const arr = { ...arrBase };
+  async findAll(
+    page?: number,
+    pageSize?: number,
+    filters?: User | undefined,
+  ): Promise<ListUserDto> {
+    if (!page || page < 1) page = 1;
+    if (!pageSize || pageSize > 50 || page < 1) pageSize = 10;
 
-    const arr = await this.usersRepository.find();
+    const skip = (page - 1) * pageSize;
 
-    arr.forEach((object) => {
-      delete object.password;
-      delete object.hashedRt;
-    });
+    // Create a query builder for the User entity
+    const query = this.usersRepository.createQueryBuilder('user');
 
-    return arr;
+    // Apply filtering conditions based on the filters object
+    if (filters) {
+      if (filters.name) {
+        query.andWhere('user.name like :name', {
+          propertyName: filters.name,
+        });
+      }
+    }
+
+    const totalCount = await query.getCount();
+    const countPage = Math.ceil(totalCount / pageSize);
+
+    // Apply pagination
+    query.skip(skip).take(pageSize);
+
+    // Execute the query
+    const users = await query.getMany();
+
+    return {
+      users,
+      countPage,
+    };
   }
 
   async findOne(username: string): Promise<User> {

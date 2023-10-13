@@ -13,7 +13,7 @@ const userMock = {
   password: 'password_1234',
 };
 
-const listUserMock = [userMock, userMock];
+const retListUserMock = { countPage: 1, users: [userMock, userMock] };
 const id = 'a0bd2189-971b-4ebd-bfba-44b7c8fa04c1';
 
 const userUpdateDeleteMock: returnDeleteUpdateT = { result: { n: 1, ok: 1 } };
@@ -31,7 +31,7 @@ describe('UserController', () => {
           provide: UserService,
           useValue: {
             create: jest.fn().mockResolvedValue(userMock),
-            findAll: jest.fn().mockResolvedValue(listUserMock),
+            findAll: jest.fn().mockResolvedValue(retListUserMock),
             findOne: jest.fn().mockResolvedValue(userMock),
             findOneId: jest.fn().mockResolvedValue(userMock),
             update: jest.fn().mockResolvedValue(userUpdateDeleteMock),
@@ -64,7 +64,7 @@ describe('UserController', () => {
       const ret = await controller.findAll();
 
       expect(service.findAll).toHaveBeenCalled();
-      expect(ret).toMatchObject(listUserMock);
+      expect(ret).toMatchObject(retListUserMock);
     });
 
     it('Should return an user', async () => {

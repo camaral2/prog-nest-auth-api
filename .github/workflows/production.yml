@@ -99,5 +99,5 @@ jobs:
         command_timeout: "90m"
         script: |
            cd ./apps_nodejs/prog-nest-auth-api/
-           yarn
-           pm2 restart prog-nest-auth-api
+           yarn install --frozen-lockfile
+           pm2 restart prog-nest-auth-api --update-env

@@ -14,28 +14,25 @@ const typeorm_1 = require("@nestjs/typeorm");
 const path_1 = require("path");
 const user_module_1 = require("./user/user.module");
 const auth_module_1 = require("./auth/auth.module");
-require("dotenv/config");
+const config_1 = require("@nestjs/config");
 let AppModule = class AppModule {
-    onModuleInit() {
-        const PORT = process.env.PORT || 4000;
-        const PORT_MCRO = process.env.PORT_MCRO || 4010;
-        const HOST_MCRO = process.env.HOST_MCRO || 'localhost';
-        common_1.Logger.log('PORT:' + PORT);
-        common_1.Logger.log('PORT_MCRO:' + PORT_MCRO);
-        common_1.Logger.log('HOST_MCRO:' + HOST_MCRO);
-    }
 };
 AppModule = __decorate([
     (0, common_1.Module)({
         imports: [
-            typeorm_1.TypeOrmModule.forRoot({
-                type: 'mongodb',
-                url: process.env.MONGO_URL,
-                entities: [(0, path_1.join)(__dirname, '**/**.entity{.ts,.js}')],
-                synchronize: true,
-                useNewUrlParser: true,
-                logging: true,
-                useUnifiedTopology: true,
+            config_1.ConfigModule.forRoot(),
+            typeorm_1.TypeOrmModule.forRootAsync({
+                imports: [config_1.ConfigModule],
+                useFactory: (configService) => ({
+                    type: 'mongodb',
+                    url: configService.get('MONGO_URL'),
+                    entities: [(0, path_1.join)(__dirname, '**/**.entity{.ts,.js}')],
+                    synchronize: true,
+                    useNewUrlParser: true,
+                    logging: true,
+                    useUnifiedTopology: true,
+                }),
+                inject: [config_1.ConfigService],
             }),
             user_module_1.UserModule,
             auth_module_1.AuthModule,

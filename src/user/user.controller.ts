@@ -13,6 +13,7 @@ import {
   UseFilters,
   ParseUUIDPipe,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 
 import { UserService } from './user.service';
@@ -24,6 +25,7 @@ import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { HttpExceptionFilter } from '../shared/filter';
 import { returnDeleteUpdateT } from '../shared/return-delete-update.type';
 import { JwtAuthGuard } from '../auth/jwt.auth-guard';
+import { ListUserDto } from './dto/list-user-dto';
 
 @ApiBearerAuth()
 @ApiTags('user')
@@ -42,8 +44,22 @@ export class UserController {
   }
 
   @Get()
-  findAll(): Promise<User[]> {
-    return this.userService.findAll();
+  async findAll(
+    @Query() queryParams: ListQueryParams = {},
+  ): Promise<ListUserDto> {
+    const { page, pageSize, filters } = queryParams;
+
+    const result = await this.userService.findAll(
+      page,
+      pageSize,
+      filters as User,
+    );
+
+    // Assuming the result from the service includes the user list and count of pages
+    return {
+      users: result.users,
+      countPage: result.countPage,
+    };
   }
 
   @Get(':username')
