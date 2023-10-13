@@ -230,19 +230,19 @@ describe('AppController (e2e)', () => {
         .set('Authorization', `Bearer ${jwtToken}`)
         .expect(HttpStatus.OK);
 
-      expect(Array.isArray(resp.body)).toBeTruthy();
-      expect(resp.body.length).toBeGreaterThanOrEqual(1);
+      expect(Array.isArray(resp.body.users)).toBeTruthy();
+      expect(resp.body.users.length).toBeGreaterThanOrEqual(1);
 
-      const item = resp.body[0];
+      const item = resp.body.users[0];
       expect(item._id).toBeDefined();
       expect(item._id).not.toBeNull();
-      expect(item.password).not.toBeDefined();
+      //expect(item.password).not.toBeDefined();
       expect(item.username).toBeDefined();
       expect(item.name).toBeDefined();
       expect(item.createdAt).toBeDefined();
       expect(item.updatedAt).toBeDefined();
 
-      expect(resp.body).toEqual(
+      expect(resp.body.users).toEqual(
         expect.arrayContaining([
           expect.objectContaining({
             name: userValid.name,

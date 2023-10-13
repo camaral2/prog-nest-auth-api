@@ -62,26 +62,24 @@ export class UserService implements OnModuleInit {
 
     const skip = (page - 1) * pageSize;
 
-    // Create a query builder for the User entity
-    const query = this.usersRepository.createQueryBuilder('user');
+    const query: any = {}; // Define your query object here
 
     // Apply filtering conditions based on the filters object
     if (filters) {
       if (filters.name) {
-        query.andWhere('user.name like :name', {
-          propertyName: filters.name,
-        });
+        query.name = { $regex: new RegExp(filters.name, 'i') };
       }
     }
 
-    const totalCount = await query.getCount();
+    const totalCount = await this.usersRepository.count(query);
     const countPage = Math.ceil(totalCount / pageSize);
 
     // Apply pagination
-    query.skip(skip).take(pageSize);
-
-    // Execute the query
-    const users = await query.getMany();
+    const users = await this.usersRepository.find({
+      where: query,
+      skip,
+      take: pageSize,
+    });
 
     return {
       users,
